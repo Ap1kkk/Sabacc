@@ -1,0 +1,48 @@
+
+.dark_theme {
+  --bg-color: #0a0b0d;
+  --sub-bg-color: #434343;
+  
+  --icon-color: #fff;
+  --accent-icon-color: #83defc;
+
+  --main-color: #83defc;
+  --secondary-color: #ed85ff;
+
+  --white-color: #000;
+  --light-gray-color: #333;
+  --gray-color: #888;
+  --black-color: #fff;
+
+  --skeleton-bg-color: #000;
+  --skeleton-color: #00bfff70;
+  --overlay-color: #00000080;
+  --box-shadow-color: #83defc55;
+  --placeholder-color: #bbb;
+
+  --red-color: #f12424;
+}
+
+.light_theme {
+  --bg-color: #ffffff;
+  --sub-bg-color: #222222;
+
+  --icon-color: #000;
+  --accent-icon-color: #6f48eb;
+
+  --main-color: #115b4a;
+  --secondary-color: #474eab;
+
+  --white-color: #fff;
+  --light-gray-color: #eee;
+  --gray-color: #888;
+  --black-color: #000;
+
+  --skeleton-bg-color: #dedede;
+  --skeleton-color: #909090;
+  --overlay-color: #00000080;
+  --box-shadow-color: #6f48eb55;
+  --placeholder-color: #888;
+
+  --red-color: #f12424;
+}
