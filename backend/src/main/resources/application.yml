@@ -1,3 +1,35 @@
+server:
+  port: 8080
+
+logging:
+  level:
+    root: INFO
+    ru.ngtu: DEBUG
+
 spring:
   application:
     name: sabacc
+
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://${spring.datasource.database.host}:${spring.datasource.database.port}/${spring.datasource.database.name}
+    password: postgres
+    username: postgres
+    database:
+      host: localhost
+      port: 5432
+      name: sabacc
+
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: validate
+
+  flyway:
+    enabled: true
+    validate-migration-naming: false
+    out-of-order: true
+
+
+user:
+  expiration-in-hours: 1
