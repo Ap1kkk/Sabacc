@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.ngtu.sabacc.config.user.UserConfigProperties;
 import ru.ngtu.sabacc.event.UserDeletedEvent;
 import ru.ngtu.sabacc.exception.UserAlreadyExistsException;
+import ru.ngtu.sabacc.exception.notfound.EntityNotFoundException;
 import ru.ngtu.sabacc.exception.notfound.UserNotFoundException;
 
 import java.time.Duration;
@@ -51,8 +52,12 @@ public class UserService {
     public User createUser(CreateUserDto dto) {
         log.info("Creating user: {}", dto);
 
-        if(getUserByUsername(dto.getUsername()) != null) {
-            throw new UserAlreadyExistsException(dto.getUsername());
+        try {
+            if(getUserByUsername(dto.getUsername()) != null) {
+                throw new UserAlreadyExistsException(dto.getUsername());
+            }
+        }
+        catch (EntityNotFoundException ignored) {
         }
 
         User userToCreate = User.builder()
