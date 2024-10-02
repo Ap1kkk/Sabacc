@@ -1,12 +1,13 @@
 
 import { memo } from 'react';
-import cls from './MainPage.module.scss'
 import MainMenu from '@/widgets/MainMenu/ui/MainMenu';
+import MainImg from '@/shared/assets/images/main.jpg'
+import { BackgroundImg } from '@/shared/ui/BackgroundImg';
 
 export const MainPage = memo(() => {
   return (
     <div>
-      <img className={cls.img} src='src/shared/assets/images/main.jpg'/>
+      <BackgroundImg src={MainImg} />
       <MainMenu />
     </div>
   );

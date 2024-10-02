@@ -1,5 +1,6 @@
 export enum AppRoutes {
   MAIN = '',
+  ROOLS = 'rools',
   // SIGN_IN = 'signin',
   // PROFILE = 'profile',
   // SEARCH = 'search',
@@ -16,6 +17,7 @@ export enum AppRoutes {
 }
 
 export const getRouteMain = () => `/`;
+export const getRouteRools = () => `/rools`;
 // export const getRouteCatalog = () => `/catalog`;
 // export const getRouteSignUp = () => `/signup`;
 // export const getRouteSignIn = () => `/signin`;
@@ -32,6 +34,7 @@ export const getRouteMain = () => `/`;
 
 export const AppRouteByPathPattern: Record<string, AppRoutes> = {
   [getRouteMain()]: AppRoutes.MAIN,
+  [getRouteRools()]: AppRoutes.ROOLS,
   // [getRouteCatalog()]: AppRoutes.CATALOG,
   // [getRouteSignUp()]: AppRoutes.SIGN_UP,
   // [getRouteSignIn()]: AppRoutes.SIGN_IN,
