@@ -1,0 +1,24 @@
+.Menu {
+  min-width: 500px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  padding: 50px;
+  border-radius: var(--radius-l);
+
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  background: #fff1;
+
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.mainLink {
+  margin-bottom: 30px;
+  font: var(--font-m);
+  text-transform: uppercase;
+}
