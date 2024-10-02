@@ -1,0 +1,12 @@
+server:
+  host: "localhost"
+  protocol: "http"
+
+spring:
+  datasource:
+    database:
+      host: localhost
+
+websocket:
+  stomp:
+    allowed-origin: "*"
