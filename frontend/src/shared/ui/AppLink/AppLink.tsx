@@ -11,7 +11,6 @@ interface AppLinkProps extends LinkProps {
   variant?: AppLinkVariant;
   icon?: React.FC<React.SVGProps<SVGSVGElement>>;
   children?: ReactNode;
-  fullWidth?: boolean;
   activeClassName?: string;
 }
 
@@ -22,7 +21,6 @@ export const AppLink = memo((props: AppLinkProps) => {
     children,
     variant = 'default',
     icon,
-    fullWidth,
     activeClassName = '',
     ...otherProps
   } = props;
@@ -32,7 +30,7 @@ export const AppLink = memo((props: AppLinkProps) => {
     <NavLink
       to={to}
       className={({ isActive }) =>
-        classNames(cls.AppLink, { [activeClassName]: isActive, [cls.withIcon]: !!icon, [cls.fullWidth]: fullWidth }, [
+        classNames(cls.AppLink, { [activeClassName]: isActive, [cls.withIcon]: !!icon}, [
           className,
           cls[variant],
         ])

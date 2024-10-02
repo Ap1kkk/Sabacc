@@ -6,7 +6,7 @@ export type FlexJustify = 'start' | 'center' | 'end' | 'between';
 export type FlexAlign = 'start' | 'center' | 'end';
 export type FlexDirection = 'row' | 'column';
 export type FlexWrap = 'nowrap' | 'wrap';
-export type FlexGap = '8' | '16' | '32';
+export type FlexGap = '8' | '12' | '16';
 
 const justifyClasses: Record<FlexJustify, string> = {
     start: cls.justifyStart,
@@ -28,8 +28,8 @@ const directionClasses: Record<FlexDirection, string> = {
 
 const gapClasses: Record<FlexGap, string> = {
     8: cls.gap8,
+    12: cls.gap12,
     16: cls.gap16,
-    32: cls.gap32,
 };
 
 type DivProps = DetailedHTMLProps<
@@ -57,6 +57,7 @@ export const Flex = (props: FlexProps) => {
         direction = 'row',
         wrap = 'nowrap',
         gap,
+        max,
         ...otherProps
     } = props;
 
@@ -70,7 +71,7 @@ export const Flex = (props: FlexProps) => {
     ];
 
     return (
-        <div className={classNames(cls.Flex, {}, classes)} {...otherProps}>
+        <div className={classNames(cls.Flex, {[cls.max]: max}, classes)} {...otherProps}>
             {children}
         </div>
     );
