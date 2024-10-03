@@ -7,6 +7,10 @@ spring:
     database:
       host: localhost
 
+security:
+  cors:
+    allowed-origin: "http://localhost:3000"
+
 websocket:
   stomp:
-    allowed-origin-patterns: "*"
+    allowed-origin-patterns: "http://localhost:3000"

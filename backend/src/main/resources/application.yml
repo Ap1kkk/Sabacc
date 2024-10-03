@@ -36,10 +36,14 @@ spring:
 user:
   expiration-in-hours: 1
 
+security:
+  cors:
+    allowed-origin: "${server.protocol}://${server.host}:3000"
+
 websocket:
   stomp:
     endpoint: "/ws"
-    allowed-origin: ${server.protocol}://${server.host}:3000"
+    allowed-origin: http://localhost:3000
   broker:
     destination-prefixes:
       - "/topic"

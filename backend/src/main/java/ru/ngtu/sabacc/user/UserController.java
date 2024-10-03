@@ -29,7 +29,7 @@ public class UserController {
         return userService.getUserByUsername(username);
     }
 
-    @PostMapping("/create")
+    @PostMapping("/create/anonymous")
     public User createUser(@RequestBody CreateUserDto dto) {
         return userService.createUser(dto);
     }

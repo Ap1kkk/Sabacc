@@ -14,6 +14,7 @@ import java.util.List;
 public class PropertyCheckApplicationContextInitializer implements ApplicationContextInitializer<ConfigurableApplicationContext> {
     //TODO add warning to some not required properties
     private static final List<String> PROPERTIES = List.of(
+            "security.cors.allowed-origin",
             "websocket.stomp.endpoint",
             "websocket.broker.destination-prefixes",
             "websocket.broker.application-destination-prefixes",
