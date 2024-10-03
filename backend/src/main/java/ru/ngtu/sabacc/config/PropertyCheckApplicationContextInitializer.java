@@ -12,9 +12,9 @@ import java.util.List;
 @RequiredArgsConstructor
 @Component
 public class PropertyCheckApplicationContextInitializer implements ApplicationContextInitializer<ConfigurableApplicationContext> {
+    //TODO add warning to some not required properties
     private static final List<String> PROPERTIES = List.of(
             "websocket.stomp.endpoint",
-            "websocket.stomp.allowed-origin",
             "websocket.broker.destination-prefixes",
             "websocket.broker.application-destination-prefixes",
             "user.expiration-in-hours",

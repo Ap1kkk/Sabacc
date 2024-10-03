@@ -13,6 +13,7 @@ public class WebsocketConfigProperties {
     public static class Stomp {
         private String endpoint;
         private String allowedOrigin;
+        private String allowedOriginPatterns;
     }
 
     @Data

@@ -9,4 +9,4 @@ spring:
 
 websocket:
   stomp:
-    allowed-origin: "*"
+    allowed-origin-patterns: "*"
