@@ -5,9 +5,11 @@ x-project-name:
 
 x-host:
   &host localhost
+x-protocol:
+  &protocol http
 
 x-cors:
-  &cors "http://localhost:4200"
+  &cors "http://localhost:3000"
 
 x-db-host:
   &db-host postgres
@@ -31,6 +33,7 @@ services:
       - postgres
     environment:
       SERVER_HOST: *host
+      SERVER_PROTOCOL: *protocol
 
       SPRING_PROFILES_ACTIVE: *profiles
 
@@ -40,6 +43,8 @@ services:
       SPRING_DATASOURCE_DATABASE_HOST: *db-host
       SPRING_DATASOURCE_DATABASE_PORT: 5432
       SPRING_DATASOURCE_DATABASE_NAME: *project-name
+
+      WEBSOCKET_STOMP_ALLOWED_ORIGIN: *cors
 
     volumes:
       - ./uploads:/app/uploads
@@ -63,7 +68,7 @@ services:
       dockerfile: Dockerfile
     container_name: sabacc_frontend
     ports:
-      - "4000:4000"
+      - "3000:3000"
 
   nginx:
     image: nginx:stable-alpine3.19
