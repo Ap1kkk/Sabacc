@@ -7,15 +7,15 @@ import 'swiper/css/navigation';
 import './RoolsPage.scss'
 import { EffectCards, Pagination, Navigation } from 'swiper/modules';
 import cls from './RoolsPage.module.scss'
-import MainImg from '@/shared/assets/images/main.jpg'
-import { BackgroundImg } from '@/shared/ui/BackgroundImg';
-import { AppLink } from '@/shared/ui/AppLink';
-import { getRouteMain } from '@/shared/const/router';
+import { Button } from '@/shared/ui/Button';
 
 export const RoolsPage = memo(() => {
+  const handleBack = () => {
+    window.history.back();
+  }
+
   return (
     <>
-      <BackgroundImg src={MainImg} />
       <Swiper
         effect={'cards'}
         grabCursor={true}
@@ -25,7 +25,7 @@ export const RoolsPage = memo(() => {
         }}
         navigation={true}
       >
-        <AppLink className={cls.btnBack} variant='btn' to={getRouteMain()}>На главную</AppLink>
+        <Button className={cls.btnBack} onClick={handleBack}>Вернуться</Button>
         <SwiperSlide>
           <ol className={cls.list}>
             <li>Есть 2 колоды: жёлтые карты и красные карты.</li>

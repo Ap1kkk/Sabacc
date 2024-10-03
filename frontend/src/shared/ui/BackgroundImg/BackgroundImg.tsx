@@ -1,14 +1,9 @@
 import { memo } from 'react';
 import cls from './BackgroundImg.module.scss';
+import MainImg from '@/shared/assets/images/main.jpg'
 
-interface BackgroundImgProps {
-  src: string;
-}
-
-export const BackgroundImg = memo((props: BackgroundImgProps) => {
-  const { src, ...otherProps } = props;
-
+export const BackgroundImg = memo(() => {
   return (
-    <img className={cls.img} src={src} />
+    <img className={cls.img} src={MainImg} />
   );
 });

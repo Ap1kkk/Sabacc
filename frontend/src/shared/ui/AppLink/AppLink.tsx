@@ -4,7 +4,7 @@ import { classNames } from '@/shared/lib/classNames/classNames';
 import cls from './AppLink.module.scss';
 import { AppIcon } from '../AppIcon';
 
-export type AppLinkVariant = 'default' | 'main' | 'btn';
+export type AppLinkVariant = 'default' | 'main' | 'btn' | 'dark';
 
 interface AppLinkProps extends LinkProps {
   className?: string;
@@ -30,9 +30,9 @@ export const AppLink = memo((props: AppLinkProps) => {
     <NavLink
       to={to}
       className={({ isActive }) =>
-        classNames(cls.AppLink, { [activeClassName]: isActive, [cls.withIcon]: !!icon}, [
-          className,
+        classNames(cls.AppLink, { [activeClassName]: isActive, [cls.withIcon]: !!icon }, [
           cls[variant],
+          className,
         ])
       }
       {...otherProps}

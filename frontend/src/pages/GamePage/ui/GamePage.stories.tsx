@@ -1,17 +1,17 @@
 /* import { ComponentMeta, ComponentStory } from '@storybook/react';
 import { Theme } from 'app/providers/ThemeProvider';
 import { ThemeDecorator } from 'shared/config/storybook/ThemeDecorator/ThemeDecorator';
-import Auth from './Auth';
+import GamePage from './GamePage';
 
 export default {
-  title: 'pages/Auth',
-  component: Auth,
+  title: 'pages/GamePage',
+  component: GamePage,
   argTypes: {
     backgroundColor: { control: 'color' },
   },
-} as ComponentMeta<typeof Auth>;
+} as ComponentMeta<typeof GamePage>;
 
-const Template: ComponentStory<typeof Auth> = () => <Auth />;
+const Template: ComponentStory<typeof GamePage> = () => <GamePage />;
 
 export const Normal = Template.bind({});
 
