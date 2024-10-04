@@ -1,0 +1,3 @@
+websocket:
+  stomp:
+    sock-js-enabled: false

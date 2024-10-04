@@ -14,6 +14,7 @@ public class WebsocketConfigProperties {
         private String endpoint = "/ws";
         private String allowedOrigin;
         private String allowedOriginPatterns;
+        private boolean sockJsEnabled = true;
     }
 
     @Data
