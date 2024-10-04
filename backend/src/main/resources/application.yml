@@ -42,7 +42,6 @@ security:
 
 websocket:
   stomp:
-    endpoint: "/ws"
     allowed-origin: http://localhost:3000
   broker:
     destination-prefixes:

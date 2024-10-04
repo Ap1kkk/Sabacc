@@ -11,7 +11,7 @@ import ru.ngtu.sabacc.chat.room.CreateChatRoomDto;
 import java.util.List;
 
 @RestController
-@RequestMapping("/chat")
+@RequestMapping("/api/chat")
 @RequiredArgsConstructor
 public class ChatController {
 

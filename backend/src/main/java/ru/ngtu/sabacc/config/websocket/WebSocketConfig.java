@@ -35,6 +35,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
                 .setAllowedOrigins(websocketConfigProperties
                         .getStomp().getAllowedOrigin())
                 .setAllowedOriginPatterns(websocketConfigProperties
-                        .getStomp().getAllowedOriginPatterns());
+                        .getStomp().getAllowedOriginPatterns())
+                .withSockJS();
     }
 }

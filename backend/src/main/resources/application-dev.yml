@@ -13,4 +13,4 @@ security:
 
 websocket:
   stomp:
-    allowed-origin-patterns: "http://localhost:3000"
+    allowed-origin: "http://localhost:3000"

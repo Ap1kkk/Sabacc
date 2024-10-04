@@ -11,7 +11,7 @@ public class WebsocketConfigProperties {
 
     @Data
     public static class Stomp {
-        private String endpoint;
+        private String endpoint = "/ws";
         private String allowedOrigin;
         private String allowedOriginPatterns;
     }

@@ -12,5 +12,5 @@ public class CorsConfigProperties {
     private String allowedOrigin;
     private String allowedHeader = "*";
     private String allowedMethod = "*";
-    private String configurationPattern = "/**";
+    private String configurationPattern = "/api/**";
 }
