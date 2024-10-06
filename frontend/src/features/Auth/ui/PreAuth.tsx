@@ -4,12 +4,15 @@ import cls from './PreAuth.module.scss'
 import { AppLink } from '@/shared/ui/AppLink';
 import { Button } from '@/shared/ui/Button';
 import { useCreateAnonymousUserMutation } from '../model/services/authService';
+import { useNavigate } from 'react-router-dom';
+import { getRouteGame } from '@/shared/const/router';
 
 
 export const PreAuth = memo(() => {
   const [isValidName, setIsValidName] = useState<boolean>(false);
   const [isStartingType, setIsStartingType] = useState<boolean>(false);
   const [createAnonymousUser] = useCreateAnonymousUserMutation();
+  const navigate = useNavigate()
   const inputNameRef = useRef<HTMLInputElement | null>(null)
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -22,11 +25,16 @@ export const PreAuth = memo(() => {
     }
   }
 
-  const handleToGame = () => {
-    if (inputNameRef.current?.value) {
-      createAnonymousUser({ username: inputNameRef.current?.value })
+  const handleToGame = async () => {
+    try {
+      if (inputNameRef.current?.value) {
+        await createAnonymousUser({ username: inputNameRef.current.value }).unwrap();
+        navigate(getRouteGame());
+      }
+    } catch (error) {
+      console.error('Ошибка создания временного пользователя:', error);
     }
-  }
+  };
 
   return (
     <div className={cls.modal}>
