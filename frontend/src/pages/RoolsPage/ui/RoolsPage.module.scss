@@ -1,0 +1,27 @@
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding-left: 20px;
+
+  li {
+    list-style: decimal;
+    font: var(--font-m);
+  }
+}
+
+.slideTitle {
+  font: var(--font-l);
+}
+
+.slideText {
+  font: var(--font-m);
+  background: none;
+}
+
+.btnBack {
+  position: absolute;
+  width: 200px !important;
+  bottom: -60px;
+  right: 0;
+}

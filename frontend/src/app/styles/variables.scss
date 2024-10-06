@@ -3,6 +3,10 @@
 
   --font-family-main: 'Roboto', 'Arial';
 
+  --font-size-xs: 12px;
+  --line-height-xs: 16px;
+  --font-xs: 400 var(--font-size-xs)/var(--line-height-xs) var(--font-family-main);
+
   --font-size-s: 16px;
   --line-height-s: 22px;
   --font-s: 400 var(--font-size-s)/var(--line-height-s) var(--font-family-main);
@@ -14,8 +18,6 @@
   --font-size-l: 36px;
   --line-height-l: 50px;
   --font-l: 400 var(--font-size-l)/var(--line-height-l) var(--font-family-main);
-
-  --index-modal: 5;
 
   --radius-circle: 100px;
   --radius-m: 20px;

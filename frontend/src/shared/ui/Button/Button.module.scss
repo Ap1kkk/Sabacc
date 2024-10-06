@@ -35,14 +35,18 @@
   }
 }
 
-.filled {
-  padding: 8px 24px;
-  background-color: var(--black-color);
-  color: var(--white-color);
+.btn {
+  padding: 12px;
+  background-color: #fff2;
+  border: 0.5px solid #fff;
+  color: #fff;
   border-radius: var(--radius-circle);
-
+  width: 100%;
+  text-align: center;
+  transition: all .2s ease-in-out;
+  
   &:hover {
-    opacity: .7;
+    border-color: #fff0;
   }
 }
 

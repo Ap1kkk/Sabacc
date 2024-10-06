@@ -1,14 +1,17 @@
 
 import { memo } from 'react';
-import cls from './MainPage.module.scss'
 import MainMenu from '@/widgets/MainMenu/ui/MainMenu';
+import cls from './MainPage.module.scss'
 
 export const MainPage = memo(() => {
   return (
-    <div>
-      <img className={cls.img} src='src/shared/assets/images/main.jpg'/>
-      <MainMenu />
-    </div>
+    <>
+      <div className={cls.menu}>
+        <h1 className={cls.title}>SAB</h1>
+        <MainMenu />
+        <h1 className={cls.title}>ACC</h1>
+      </div>
+    </>
   );
 });
 

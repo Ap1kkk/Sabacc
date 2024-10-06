@@ -1,21 +1,12 @@
 export enum AppRoutes {
   MAIN = '',
-  // SIGN_IN = 'signin',
-  // PROFILE = 'profile',
-  // SEARCH = 'search',
-  // PLACEMENT_CREARE = 'placement/create',
-  // PLACEMENT_EDIT = 'placement/:id/edit',
-  // PLACEMENT_DETAIL = 'placement/:id',
-  // PLACEMENT_BOOKING = 'placement/:id/booking',
-  // PLACEMENT_REVIEWS = 'placement/:id/reviews',
-  // PLACEMENT_CHAT = 'placement/:id/chat',
-  // OWNER = 'owner/:id',
-  // ADMIN_PANEL = 'admin_panel',
-  // FORBIDDEN = 'forbidden',
-  // NOT_FOUND = 'not_found',
+  ROOLS = 'rools',
+  GAME = 'game'
 }
 
 export const getRouteMain = () => `/`;
+export const getRouteRools = () => `/rools`;
+export const getRouteGame = () => `/game`;
 // export const getRouteCatalog = () => `/catalog`;
 // export const getRouteSignUp = () => `/signup`;
 // export const getRouteSignIn = () => `/signin`;
@@ -32,6 +23,8 @@ export const getRouteMain = () => `/`;
 
 export const AppRouteByPathPattern: Record<string, AppRoutes> = {
   [getRouteMain()]: AppRoutes.MAIN,
+  [getRouteRools()]: AppRoutes.ROOLS,
+  [getRouteGame()]: AppRoutes.GAME,
   // [getRouteCatalog()]: AppRoutes.CATALOG,
   // [getRouteSignUp()]: AppRoutes.SIGN_UP,
   // [getRouteSignIn()]: AppRoutes.SIGN_IN,

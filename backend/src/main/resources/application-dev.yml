@@ -1,0 +1,16 @@
+server:
+  host: "localhost"
+  protocol: "http"
+
+spring:
+  datasource:
+    database:
+      host: localhost
+
+security:
+  cors:
+    allowed-origin: "http://localhost:3000"
+
+websocket:
+  stomp:
+    allowed-origin: "http://localhost:3000"
