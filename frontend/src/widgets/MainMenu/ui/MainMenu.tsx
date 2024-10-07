@@ -1,12 +1,15 @@
-import { memo, useState } from 'react';
+import { memo, useEffect, useState } from 'react';
 import cls from './MainMenu.module.scss'
 import { AppLink } from '@/shared/ui/AppLink';
 import { classNames } from '@/shared/lib/classNames/classNames';
 import { HStack, VStack } from '@/shared/ui/Stack';
-import { getRouteRools } from '@/shared/const/router';
+import { getRouteGame, getRouteRools } from '@/shared/const/router';
 import { Button } from '@/shared/ui/Button';
 import { Modal } from '@/shared/ui/Modal';
 import PreAuth from '@/features/Auth/ui/PreAuth';
+import { useNavigate } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import { selectCurrentUser } from '@/features/Auth/model/selectors/selectCurrentUser';
 
 interface MainMenuProps {
   className?: string;
@@ -15,8 +18,16 @@ interface MainMenuProps {
 export const MainMenu = memo((props: MainMenuProps) => {
   const { className } = props;
   const [isOpen, setIsOpen] = useState(false);
+  const navigate = useNavigate();
+  const user = useSelector(selectCurrentUser);
 
-  const handleOpen = () => setIsOpen(true);
+  const handleOpen = () => {
+    if (user) {
+      navigate(getRouteGame());
+      return;
+    }
+    setIsOpen(true);
+  }
   const handleClose = () => setIsOpen(false);
 
   return (
@@ -28,14 +39,16 @@ export const MainMenu = memo((props: MainMenuProps) => {
       </Modal>
 
       <HStack gap='8' max>
-        <VStack gap='8' max>
+        <AppLink variant='btn' to={'game'}>Аккаунт</AppLink>
+        <AppLink variant='btn' to={getRouteRools()}>Правила</AppLink>
+        {/*   <VStack gap='8' max>
           <AppLink variant='btn' to={'game'}>Аккаунт</AppLink>
           <AppLink variant='btn' to={'game'}>История игр</AppLink>
         </VStack>
         <VStack gap='8' max>
           <AppLink variant='btn' to={getRouteRools()}>Правила</AppLink>
           <AppLink variant='btn' to={'game'}>Настроки</AppLink>
-        </VStack>
+        </VStack> */}
       </HStack>
     </div>
   );

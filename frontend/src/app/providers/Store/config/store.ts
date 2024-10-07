@@ -4,6 +4,8 @@ import { StateSchema } from './StateSchema';
 import { createReducerManager } from './reducerManager';
 import { authReducer } from '@/features/Auth/model/slice/authSlice';
 import { authApi } from '@/features/Auth/model/services/authService';
+import { chatReducer } from '@/features/Chat/model/slice/chatSlice';
+import { chatApi } from '@/features/Chat/model/services/chatService';
 
 export function createReduxStore(
   initialState?: StateSchema,
@@ -12,7 +14,9 @@ export function createReduxStore(
   const rootReducers: ReducersMapObject<StateSchema> = {
     ...asyncReducers,
     auth: authReducer,
+    chat: chatReducer,
     [authApi.reducerPath]: authApi.reducer,
+    [chatApi.reducerPath]: chatApi.reducer,
   };
 
   const reducerManager = createReducerManager(rootReducers);

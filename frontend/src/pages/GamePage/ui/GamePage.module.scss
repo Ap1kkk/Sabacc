@@ -1,0 +1,11 @@
+.container {
+  position: relative;
+  z-index: 1;
+}
+
+.chat {
+  width: fit-content;
+  background-color: black;
+  padding: 20px;
+  border: 1px solid white;
+}
