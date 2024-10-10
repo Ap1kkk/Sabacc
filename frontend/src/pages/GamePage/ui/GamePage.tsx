@@ -58,7 +58,7 @@ export const GamePage = memo(() => {
       if (!currentChat?.id) return;
 
       // Подписываемся на топик конкретного чата
-      const subscription = stompClient.subscribe(`/topic/messages/${currentChat.id}`, (message: Message) => {
+      const subscription = stompClient.subscribe(`/topic/chat/${currentChat.id}`, (message: Message) => {
         try {
           const chatMessage: IMessage = JSON.parse(message.body);
           console.log('Новое сообщение из WebSocket:', chatMessage);
@@ -110,8 +110,6 @@ export const GamePage = memo(() => {
     client.publish({ destination: `/app/chat`, body: JSON.stringify(messageToSend) });
 
     // Добавляем сообщение локально
-    // @ts-ignore
-    setMessages((prevMessages) => [...prevMessages, messageToSend]);
     setNewMessage(''); // Очищаем поле ввода
   };
 
