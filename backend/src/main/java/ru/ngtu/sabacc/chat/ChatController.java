@@ -2,11 +2,11 @@ package ru.ngtu.sabacc.chat;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.*;
-import ru.ngtu.sabacc.chat.message.ChatMessage;
-import ru.ngtu.sabacc.chat.message.ChatMessageDto;
-import ru.ngtu.sabacc.chat.room.ChatRoom;
-import ru.ngtu.sabacc.chat.room.CreateChatRoomDto;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+import ru.ngtu.sabacc.chat.message.dto.SentChatMessageDto;
 
 import java.util.List;
 
@@ -17,22 +17,9 @@ public class ChatController {
 
     private final ChatService chatService;
 
-    @GetMapping("/rooms/all")
-    @Transactional
-    public List<ChatRoom> getAllChatRooms() {
-        return chatService.getChatRooms();
-    }
-
     @GetMapping("/room/{roomId}/history")
     @Transactional
-    public List<ChatMessageDto> getChatRoomHistory(@PathVariable Long roomId) {
+    public List<SentChatMessageDto> getChatRoomHistory(@PathVariable Long roomId) {
         return chatService.getChatRoomHistory(roomId);
     }
-
-    @PostMapping("/new")
-    @Transactional
-    public ChatRoom startNewChat(@RequestBody CreateChatRoomDto dto) {
-        return chatService.startNewChat(dto);
-    }
 }
-

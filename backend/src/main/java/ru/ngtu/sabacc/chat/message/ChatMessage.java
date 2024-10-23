@@ -2,8 +2,9 @@ package ru.ngtu.sabacc.chat.message;
 
 import jakarta.persistence.*;
 import lombok.*;
-import ru.ngtu.sabacc.chat.room.ChatRoom;
-import ru.ngtu.sabacc.model.BaseEntity;
+import org.hibernate.annotations.CreationTimestamp;
+import ru.ngtu.sabacc.room.SessionRoom;
+import ru.ngtu.sabacc.system.model.BaseEntity;
 
 import java.time.Instant;
 
@@ -16,8 +17,8 @@ import java.time.Instant;
 @AllArgsConstructor
 public class ChatMessage extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "chat_room_id", nullable = false)
-    private ChatRoom chatRoom;
+    @JoinColumn(name = "room_id", nullable = false)
+    private SessionRoom sessionRoom;
 
     @Column(name = "sender_name", nullable = false)
     private String senderName;
@@ -26,6 +27,6 @@ public class ChatMessage extends BaseEntity {
     private String content;
 
     @Column(name = "sent_at")
+    @CreationTimestamp
     private Instant sentAt = Instant.now();
-
 }

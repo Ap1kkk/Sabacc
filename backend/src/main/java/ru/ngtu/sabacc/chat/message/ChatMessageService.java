@@ -5,8 +5,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.ngtu.sabacc.event.ChatRoomDeletedEvent;
-import ru.ngtu.sabacc.exception.notfound.ChatMessageNotFoundException;
+import ru.ngtu.sabacc.chat.message.dto.SentChatMessageDto;
+import ru.ngtu.sabacc.chat.message.dto.UnsentChatMessageDto;
+import ru.ngtu.sabacc.chat.message.mapper.SentChatMessageMapper;
+import ru.ngtu.sabacc.chat.message.mapper.UnsentChatMessageMapper;
+import ru.ngtu.sabacc.system.event.SessionRoomDeletedEvent;
+import ru.ngtu.sabacc.system.exception.notfound.ChatMessageNotFoundException;
+import ru.ngtu.sabacc.user.User;
+import ru.ngtu.sabacc.user.UserService;
 
 import java.time.Instant;
 import java.util.List;
@@ -18,26 +24,30 @@ import java.util.stream.Collectors;
 public class ChatMessageService {
 
     private final ChatMessageRepository chatMessageRepository;
-    private final ChatMessageMapper chatMessageMapper;
+    private final UnsentChatMessageMapper unsentChatMessageMapper;
+    private final SentChatMessageMapper sentChatMessageMapper;
+    private final UserService userService;
 
     public ChatMessage getMessageById(Long id) {
         return chatMessageRepository.findById(id).orElse(null);
     }
 
     public List<ChatMessage> getAllMessagesByRoomId(Long chatRoomId) {
-        return chatMessageRepository.findAllByChatRoom_IdOrderBySentAtAsc(chatRoomId);
+        return chatMessageRepository.findAllBySessionRoom_IdOrderBySentAtAsc(chatRoomId);
     }
 
-    public List<ChatMessageDto> getAllMessageDtosByRoomId(Long chatRoomId) {
+    public List<SentChatMessageDto> getAllMessageDtosByRoomId(Long chatRoomId) {
         return getAllMessagesByRoomId(chatRoomId)
                 .stream()
-                .map(chatMessageMapper::toDto)
+                .map(sentChatMessageMapper::toDto)
                 .collect(Collectors.toList());
     }
 
-    public ChatMessage saveMessage(ChatMessageDto messageDto) {
-        ChatMessage message = chatMessageMapper.toEntity(messageDto);
+    public ChatMessage saveMessage(UnsentChatMessageDto messageDto) {
+        User user = userService.getUserById(messageDto.getUserId());
+        ChatMessage message = unsentChatMessageMapper.toEntity(messageDto);
         message.setSentAt(Instant.now());
+        message.setSenderName(user.getUsername());
         return chatMessageRepository.save(message);
     }
 
@@ -56,9 +66,9 @@ public class ChatMessageService {
         chatMessageRepository.deleteAll(allChatMessages);
     }
 
-    @EventListener(ChatRoomDeletedEvent.class)
+    @EventListener(SessionRoomDeletedEvent.class)
     @Transactional
-    void onChatRoomDeleted(ChatRoomDeletedEvent event) {
-        deleteAllMessagesFromChatRoom(event.chatRoom().getId());
+    void onChatRoomDeleted(SessionRoomDeletedEvent event) {
+        deleteAllMessagesFromChatRoom(event.sessionRoom().getId());
     }
 }

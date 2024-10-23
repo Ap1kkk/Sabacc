@@ -5,11 +5,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.ngtu.sabacc.config.user.UserConfigProperties;
-import ru.ngtu.sabacc.event.UserDeletedEvent;
-import ru.ngtu.sabacc.exception.UserAlreadyExistsException;
-import ru.ngtu.sabacc.exception.notfound.EntityNotFoundException;
-import ru.ngtu.sabacc.exception.notfound.UserNotFoundException;
+import ru.ngtu.sabacc.system.config.user.UserConfigProperties;
+import ru.ngtu.sabacc.system.event.UserDeletedEvent;
+import ru.ngtu.sabacc.system.exception.UserAlreadyExistsException;
+import ru.ngtu.sabacc.system.exception.notfound.EntityNotFoundException;
+import ru.ngtu.sabacc.system.exception.notfound.UserNotFoundException;
 
 import java.time.Duration;
 import java.time.Instant;

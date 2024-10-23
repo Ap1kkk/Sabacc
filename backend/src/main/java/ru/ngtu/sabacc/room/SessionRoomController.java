@@ -1,0 +1,43 @@
+package ru.ngtu.sabacc.room;
+
+import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.*;
+import ru.ngtu.sabacc.user.User;
+
+import java.util.List;
+
+/**
+ * @author Egor Bokov
+ */
+@RestController
+@RequestMapping("/api/room")
+@RequiredArgsConstructor
+public class SessionRoomController {
+
+    private final SessionRoomService roomService;
+
+    @GetMapping("/all")
+    public List<SessionRoom> getAllRooms() {
+        return roomService.getAllRooms();
+    }
+
+    @GetMapping("/{roomId}")
+    public SessionRoom getRoomById(@PathVariable Long roomId) {
+        return roomService.getRoomById(roomId);
+    }
+
+    @GetMapping("/{roomId}/members")
+    public List<User> getRoomMembers(@PathVariable Long roomId) {
+        return roomService.getSessionMembers(roomId);
+    }
+
+    @PostMapping("/{roomId}/join")
+    public void joinSession(@PathVariable Long roomId, @RequestParam Long userId) {
+        roomService.joinSession(roomId, userId);
+    }
+
+    @PostMapping("/create")
+    public SessionRoom createRoom(@RequestParam Long userId) {
+        return roomService.createSessionRoom(userId);
+    }
+}

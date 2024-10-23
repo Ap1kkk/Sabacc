@@ -3,7 +3,7 @@ package ru.ngtu.sabacc.chat;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.stereotype.Controller;
-import ru.ngtu.sabacc.chat.message.ChatMessageDto;
+import ru.ngtu.sabacc.chat.message.dto.UnsentChatMessageDto;
 
 /**
  * @author Egor Bokov
@@ -15,7 +15,7 @@ public class ChatWebsocketController {
     private final ChatService chatService;
 
     @MessageMapping("/chat")
-    public void sendMessage(ChatMessageDto chatMessageDto) {
-        chatService.sendMessage(chatMessageDto);
+    public void sendMessage(UnsentChatMessageDto unsentChatMessageDto) {
+        chatService.sendMessage(unsentChatMessageDto);
     }
 }

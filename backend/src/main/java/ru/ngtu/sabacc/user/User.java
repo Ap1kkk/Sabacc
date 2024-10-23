@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
-import ru.ngtu.sabacc.model.BaseEntity;
+import ru.ngtu.sabacc.system.model.BaseEntity;
 
 import java.time.Instant;
 

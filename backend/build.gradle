@@ -10,9 +10,6 @@ plugins {
 group = 'ru.ngtu'
 version = '0.0.1-SNAPSHOT'
 
-java {
-    sourceCompatibility = '17'
-}
 
 configurations {
     compileOnly {

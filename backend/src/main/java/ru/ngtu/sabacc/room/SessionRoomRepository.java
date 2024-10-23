@@ -1,4 +1,4 @@
-package ru.ngtu.sabacc.chat.message;
+package ru.ngtu.sabacc.room;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
@@ -6,6 +6,6 @@ import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 import java.util.List;
 
 @RepositoryRestResource(exported = false)
-public interface ChatMessageRepository extends JpaRepository<ChatMessage, Long>{
-    List<ChatMessage> findAllBySessionRoom_IdOrderBySentAtAsc(Long id);
+public interface SessionRoomRepository extends JpaRepository<SessionRoom, Long> {
+    List<SessionRoom> findAllByMembers_Id(Long userId);
 }
