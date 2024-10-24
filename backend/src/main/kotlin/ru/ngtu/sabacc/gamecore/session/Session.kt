@@ -228,7 +228,6 @@ class Session(
                         continue
 
                     pay(opponentId, 1)
-                    TODO("What happens if player can't pay?")
                 }
             }
         }
@@ -262,13 +261,50 @@ class Session(
             passCount = 0
         }
         else {
-            nextRound()
+            results()
         }
     }
 
-    private fun nextRound() {
-        TODO("Show the results of the round")
+    private fun results() {
+        // Check for all Imposter cards
+        // Replace all imposter cards with Value cards
+        // Rate players hand
+        // Collect taxes
+        // Show results to players
+        // Delete broke players from the game
 
+        if (players.size > 1) {
+            nextRound()
+        }
+        else {
+            TODO("Show the winner")
+        }
+    }
+
+    // Difference and strength of hand
+    private fun rateHand(sandCard: Card, bloodCard: Card): Pair<Int, Int?> {
+        if (sandCard is Card.SylopCard &&
+            bloodCard is Card.SylopCard)
+            return Pair(0, 0)
+
+        if (sandCard is Card.SylopCard &&
+            bloodCard is Card.ValueCard) {
+            return Pair(bloodCard.value, null)
+        }
+
+        if (bloodCard is Card.SylopCard &&
+            sandCard is Card.ValueCard) {
+            return Pair(sandCard.value, null)
+        }
+
+        val bloodCardCast = bloodCard as Card.ValueCard
+        val sandCardCast = sandCard as Card.ValueCard
+
+        val difference = Math.abs(bloodCardCast.value - sandCardCast.value)
+        return if (difference == 0) Pair(0, bloodCardCast.value) else Pair(difference, null)
+    }
+
+    private fun nextRound() {
         gameBoard = initGameBoard()
         gameState.round++
         playersIdIter = players.keys.iterator()
