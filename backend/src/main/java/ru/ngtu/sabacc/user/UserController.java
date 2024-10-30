@@ -1,13 +1,11 @@
 package ru.ngtu.sabacc.user;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-import static ru.ngtu.sabacc.common.RestApiEndpoint.API_USERS;
+import static ru.ngtu.sabacc.constants.RestApiEndpoint.API_USERS;
 
 @RestController
 @RequestMapping(API_USERS)

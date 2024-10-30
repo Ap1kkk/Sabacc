@@ -10,7 +10,7 @@ import ru.ngtu.sabacc.chat.message.dto.SentChatMessageDto;
 
 import java.util.List;
 
-import static ru.ngtu.sabacc.common.RestApiEndpoint.API_CHAT;
+import static ru.ngtu.sabacc.constants.RestApiEndpoint.API_CHAT;
 
 @RestController
 @RequestMapping(API_CHAT)

@@ -5,7 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Component;
 
-import static ru.ngtu.sabacc.common.WebSocketApiEndpoint.SESSION_ID;
+import static ru.ngtu.sabacc.constants.WebSocketApiEndpoint.SESSION_ID;
 
 /**
  * @author Egor Bokov
@@ -27,10 +27,10 @@ public class WebSocketMessageSender {
         messagingTemplate.convertAndSendToUser(userId.toString(), destination, payload);
     }
 
-    public void sendMessageSessionBroadcast(Long sessionId, String destination, Object payload) {
-        String replacedDestination = destination.replace(SESSION_ID, sessionId.toString());
-        log.debug("WS: [{}] sending message broadcast: payload={}", replacedDestination, payload.toString());
-        messagingTemplate.convertAndSend(destination, payload);
+    public void sendMessageSessionBroadcast(Long sessionId, String destinationTemplate, Object payload) {
+        String replacedDestination = destinationTemplate.replace(SESSION_ID, sessionId.toString());
+        log.debug("WS: [{}] sending message broadcast to session: session={} payload={}", replacedDestination, sessionId,  payload.toString());
+        messagingTemplate.convertAndSend(replacedDestination, payload);
     }
 
     public void sendMessageBroadcast(String destination, Object payload) {

@@ -6,7 +6,7 @@ import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.stereotype.Controller;
 
-import static ru.ngtu.sabacc.common.WebSocketApiEndpoint.*;
+import static ru.ngtu.sabacc.constants.WebSocketApiEndpoint.*;
 
 /**
  * @author Egor Bokov
@@ -19,32 +19,32 @@ import static ru.ngtu.sabacc.common.WebSocketApiEndpoint.*;
 @Controller
 public class WebSocketLoggingController {
 
-    @MessageMapping(SESSION_TURN_INPUT)
+    @MessageMapping(WS_SESSION_TURN_INPUT)
     public void logSessionTurnInput(String payload, SimpMessageHeaderAccessor headerAccessor) {
         logMessage(payload, headerAccessor);
     }
 
-    @MessageMapping(SESSION_CHAT_INPUT)
+    @MessageMapping(WS_SESSION_CHAT_INPUT)
     public void logSessionChatInput(String payload, SimpMessageHeaderAccessor headerAccessor) {
         logMessage(payload, headerAccessor);
     }
 
-    @MessageMapping(SESSION_CHAT_QUEUE)
+    @MessageMapping(WS_SESSION_CHAT_QUEUE)
     public void logSessionChatQueue(String payload, SimpMessageHeaderAccessor headerAccessor) {
         logMessage(payload, headerAccessor);
     }
 
-    @MessageMapping(SESSION_CHAT_TOPIC)
+    @MessageMapping(WS_SESSION_CHAT_TOPIC)
     public void logSessionChatTopic(String payload, SimpMessageHeaderAccessor headerAccessor) {
         logMessage(payload, headerAccessor);
     }
 
-    @MessageMapping(ACCEPTED_TURNS_QUEUE)
+    @MessageMapping(WS_ACCEPTED_TURNS_QUEUE)
     public void logAcceptedTurnsQueue(String payload, SimpMessageHeaderAccessor headerAccessor) {
         logMessage(payload, headerAccessor);
     }
 
-    @MessageMapping(USER_SESSION_ERRORS_QUEUE)
+    @MessageMapping(WS_USER_SESSION_ERRORS_QUEUE)
     public void logUserSessionErrorsQueue(String payload, SimpMessageHeaderAccessor headerAccessor) {
         logMessage(payload, headerAccessor);
     }

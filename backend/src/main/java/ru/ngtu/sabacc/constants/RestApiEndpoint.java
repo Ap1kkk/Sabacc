@@ -1,4 +1,4 @@
-package ru.ngtu.sabacc.common;
+package ru.ngtu.sabacc.constants;
 
 /**
  * @author Egor Bokov

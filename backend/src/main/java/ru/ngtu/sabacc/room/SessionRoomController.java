@@ -6,7 +6,7 @@ import ru.ngtu.sabacc.user.User;
 
 import java.util.List;
 
-import static ru.ngtu.sabacc.common.RestApiEndpoint.API_SESSION_ROOM;
+import static ru.ngtu.sabacc.constants.RestApiEndpoint.API_SESSION_ROOM;
 
 /**
  * @author Egor Bokov

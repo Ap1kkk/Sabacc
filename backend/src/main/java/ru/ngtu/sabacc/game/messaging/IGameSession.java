@@ -9,4 +9,5 @@ import ru.ngtu.sabacc.gamecore.turn.TurnDTO;
 public interface IGameSession {
     GameStateDto getCurrentState();
     void tryMakeTurn(TurnDTO turnDTO);
+    Long getSessionId();
 }
