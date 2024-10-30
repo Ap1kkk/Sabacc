@@ -26,6 +26,8 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
                 .getBroker().getDestinationPrefixes());
         registry.setApplicationDestinationPrefixes(websocketConfigProperties
                 .getBroker().getApplicationDestinationPrefixes());
+        registry.setUserDestinationPrefix(websocketConfigProperties
+                .getBroker().getUserDestinationPrefixes());
     }
 
     @Override

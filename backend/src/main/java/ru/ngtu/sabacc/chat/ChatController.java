@@ -10,8 +10,10 @@ import ru.ngtu.sabacc.chat.message.dto.SentChatMessageDto;
 
 import java.util.List;
 
+import static ru.ngtu.sabacc.common.RestApiEndpoint.API_CHAT;
+
 @RestController
-@RequestMapping("/api/chat")
+@RequestMapping(API_CHAT)
 @RequiredArgsConstructor
 public class ChatController {
 

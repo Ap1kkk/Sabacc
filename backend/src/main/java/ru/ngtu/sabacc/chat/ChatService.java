@@ -17,17 +17,18 @@ import ru.ngtu.sabacc.room.SessionRoomService;
 import ru.ngtu.sabacc.system.event.UserJoinedSessionRoomEvent;
 import ru.ngtu.sabacc.system.exception.notfound.ChatRoomNotFoundException;
 import ru.ngtu.sabacc.user.UserService;
+import ru.ngtu.sabacc.ws.WebSocketMessageSender;
 
 import java.util.List;
+
+import static ru.ngtu.sabacc.common.WebSocketApiEndpoint.SESSION_CHAT_TOPIC;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class ChatService {
 
-    private static final String DESTINATION_TEMPLATE = "/topic/chat/%d";
-
-    private final SimpMessagingTemplate messagingTemplate;
+    private final WebSocketMessageSender socketMessageSender;
     private final ChatMessageService chatMessageService;
     private final UnsentChatMessageMapper unsentChatMessageMapper;
     private final SentChatMessageMapper sentChatMessageMapper;
@@ -37,7 +38,6 @@ public class ChatService {
     public List<SentChatMessageDto> getChatRoomHistory(Long chatRoomId) {
         return chatMessageService.getAllMessageDtosByRoomId(chatRoomId);
     }
-
 
     @Transactional
     public void sendMessage(UnsentChatMessageDto unsentChatMessageDto) {
@@ -52,8 +52,7 @@ public class ChatService {
         ChatMessage savedMessage = chatMessageService.saveMessage(unsentChatMessageDto);
         SentChatMessageDto savedMessageDto = sentChatMessageMapper.toDto(savedMessage);
 
-        String destination = DESTINATION_TEMPLATE.formatted(chatRoomId);
-        messagingTemplate.convertAndSend(destination, savedMessageDto);
+        socketMessageSender.sendMessageBroadcast(SESSION_CHAT_TOPIC.formatted(chatRoomId), savedMessageDto);
     }
 
     @EventListener(UserJoinedSessionRoomEvent.class)

@@ -46,5 +46,8 @@ websocket:
   broker:
     destination-prefixes:
       - "/topic"
+      - "/queue"
+      - "/input"
     application-destination-prefixes:
       - "/app"
+    user-destination-prefixes: "/user"

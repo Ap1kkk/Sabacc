@@ -18,6 +18,7 @@ public class PropertyCheckApplicationContextInitializer implements ApplicationCo
             "websocket.stomp.endpoint",
             "websocket.broker.destination-prefixes",
             "websocket.broker.application-destination-prefixes",
+            "websocket.broker.user-destination-prefixes",
             "user.expiration-in-hours",
             "server.host",
             "server.protocol"

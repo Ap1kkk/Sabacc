@@ -8,6 +8,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 public class WebsocketConfigProperties {
     private Stomp stomp;
     private Broker broker;
+    private boolean logging = false;
 
     @Data
     public static class Stomp {
@@ -21,5 +22,6 @@ public class WebsocketConfigProperties {
     public static class Broker {
         private String[] destinationPrefixes;
         private String[] applicationDestinationPrefixes;
+        private String userDestinationPrefixes;
     }
 }

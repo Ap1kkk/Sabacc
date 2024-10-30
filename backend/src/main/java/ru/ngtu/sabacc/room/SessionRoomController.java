@@ -6,11 +6,13 @@ import ru.ngtu.sabacc.user.User;
 
 import java.util.List;
 
+import static ru.ngtu.sabacc.common.RestApiEndpoint.API_SESSION_ROOM;
+
 /**
  * @author Egor Bokov
  */
 @RestController
-@RequestMapping("/api/room")
+@RequestMapping(API_SESSION_ROOM)
 @RequiredArgsConstructor
 public class SessionRoomController {
 

@@ -7,8 +7,10 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+import static ru.ngtu.sabacc.common.RestApiEndpoint.API_USERS;
+
 @RestController
-@RequestMapping("/api/users")
+@RequestMapping(API_USERS)
 @RequiredArgsConstructor
 public class UserController {
 
