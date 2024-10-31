@@ -1,6 +1,6 @@
 package ru.ngtu.sabacc.gamecore.turn
 
-enum class MoveType {
+enum class TurnType {
     PASS,
     GET_SAND,
     GET_BLOOD,
@@ -12,5 +12,6 @@ enum class MoveType {
     DISCARD_LAST_BLOOD,
     PLAY_NO_TAX_TOKEN,
     PLAY_TAKE_TWO_CHIPS_TOKEN,
-    PLAY_OTHER_PLAYERS_PAY_ONE_TOKEN
+    PLAY_OTHER_PLAYERS_PAY_ONE_TOKEN,
+    SELECT_DICE
 }
