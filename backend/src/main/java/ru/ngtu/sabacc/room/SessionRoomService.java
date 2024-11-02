@@ -6,13 +6,10 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.ngtu.sabacc.system.event.SessionRoomCreatedEvent;
-import ru.ngtu.sabacc.system.event.SessionRoomDeletedEvent;
-import ru.ngtu.sabacc.system.event.UserJoinedSessionRoomEvent;
-import ru.ngtu.sabacc.system.exception.UserAlreadyJoinedSessionException;
+import ru.ngtu.sabacc.system.event.*;
 import ru.ngtu.sabacc.system.exception.notfound.EntityNotFoundException;
+import ru.ngtu.sabacc.system.exception.session.*;
 import ru.ngtu.sabacc.user.User;
-import ru.ngtu.sabacc.system.event.UserDeletedEvent;
 import ru.ngtu.sabacc.user.UserService;
 
 import java.util.ArrayList;
@@ -35,10 +32,11 @@ public class SessionRoomService {
 
     @Transactional
     public List<User> getSessionMembers(Long sessionId) {
-        return sessionRoomRepository
+        SessionRoom sessionRoom = sessionRoomRepository
                 .findById(sessionId)
-                .orElseThrow(() -> new EntityNotFoundException(SessionRoom.class, sessionId))
-                .getMembers();
+                .orElseThrow(() -> new EntityNotFoundException(SessionRoom.class, sessionId));
+
+        return new ArrayList<>(List.of(sessionRoom.getPlayerFirst(), sessionRoom.getPlayerSecond()));
     }
 
     public SessionRoom getRoomById(Long id) {
@@ -48,19 +46,21 @@ public class SessionRoomService {
     }
 
     public List<SessionRoom> getAllUserSessionRooms(Long userId) {
-        return sessionRoomRepository.findAllByMembers_Id(userId);
+        return sessionRoomRepository.findAllByPlayerFirstIdOrPlayerSecondId(userId, userId);
     }
 
     @Transactional
     public SessionRoom createSessionRoom(Long userId) {
+        //TODO fix: user can create only 1 session
         User user = userService.getUserById(userId);
 
         log.info("User [{}] creating session room", userId);
-
-        List<User> members = new ArrayList<>(List.of(user));
+        sessionRoomRepository.findByPlayerFirstIdAndStatusNot(userId, SessionRoomStatus.FINISHED)
+                .ifPresent(sessionRoom -> {throw new UnfinishedSessionException(userId);});
 
         SessionRoom newSessionRoom = SessionRoom.builder()
-                .members(members)
+                .playerFirst(user)
+                .status(SessionRoomStatus.WAITING_SECOND_USER)
                 .build();
 
         SessionRoom createdSessionRoom = sessionRoomRepository.saveAndFlush(newSessionRoom);
@@ -77,12 +77,15 @@ public class SessionRoomService {
 
         SessionRoom sessionRoom = getRoomById(roomId);
         User user = userService.getUserById(userId);
-        if(sessionRoom.getMembers().contains(user))
+        if(sessionRoom.getPlayerSecond() != null)
             throw new UserAlreadyJoinedSessionException(sessionRoom.getId(), user.getId());
 
-        sessionRoom.addMember(user);
-        sessionRoomRepository.save(sessionRoom);
-        eventPublisher.publishEvent(new UserJoinedSessionRoomEvent(roomId, userId));
+        if(sessionRoom.getPlayerFirst().getId().equals(userId))
+            throw new JoinSelfHostedSessionException(userId);
+
+        sessionRoom.setPlayerSecond(user);
+        sessionRoom.setStatus(SessionRoomStatus.ALL_USERS_JOINED);
+        sessionRoomRepository.saveAndFlush(sessionRoom);
     }
 
     @Transactional
@@ -101,5 +104,72 @@ public class SessionRoomService {
             deleteSessionRoom(sessionRoom);
         }
         sessionRoomRepository.deleteAll(allUserSessionRooms);
+    }
+
+    @Transactional
+    public void handlePlayerSocketConnection(Long sessionId, Long playerId) {
+        SessionRoom sessionRoom = switchPlayerSocketConnected(sessionId, playerId, true);
+
+        if(sessionRoom.isPlayerFirstConnected() && sessionRoom.isPlayerSecondConnected()) {
+            if (sessionRoom.getStatus().equals(SessionRoomStatus.ALL_USERS_JOINED)) {
+                sessionRoom.setStatus(SessionRoomStatus.ALL_USERS_CONNECTED);
+                sessionRoomRepository.saveAndFlush(sessionRoom);
+                eventPublisher.publishEvent(new SessionReadyEvent(sessionId, sessionRoom));
+            }
+            else {
+                sessionRoom.setStatus(SessionRoomStatus.IN_PROGRESS);
+                sessionRoomRepository.saveAndFlush(sessionRoom);
+                eventPublisher.publishEvent(new PlayerReconnectedSessionEvent(sessionId, playerId, sessionRoom));
+            }
+        }
+    }
+
+    @Transactional
+    public void handlePlayerSocketDisconnect(Long sessionId, Long playerId) {
+        SessionRoom sessionRoom = switchPlayerSocketConnected(sessionId, playerId, false);
+
+        if(!sessionRoom.isPlayerFirstConnected() && !sessionRoom.isPlayerSecondConnected()) {
+            sessionRoom.setStatus(SessionRoomStatus.FINISHED);
+            sessionRoomRepository.saveAndFlush(sessionRoom);
+            eventPublisher.publishEvent(new SessionFinishedEvent(sessionId, sessionRoom));
+            return;
+        }
+
+        sessionRoom.setStatus(SessionRoomStatus.PLAYER_DISCONNECTED);
+        sessionRoomRepository.saveAndFlush(sessionRoom);
+        eventPublisher.publishEvent(new PlayerDisconnectedSessionEvent(sessionId, playerId, sessionRoom));
+    }
+
+    @EventListener(SessionFinishedEvent.class)
+    void onSessionFinished(SessionFinishedEvent event) {
+        SessionRoom sessionRoom = sessionRoomRepository.findById(event.sessionId())
+                .orElseThrow(() -> new EntityNotFoundException(SessionRoom.class, event.sessionId()));
+        sessionRoom.setStatus(SessionRoomStatus.FINISHED);
+        sessionRoomRepository.saveAndFlush(sessionRoom);
+    }
+
+    private SessionRoom switchPlayerSocketConnected(Long sessionId, Long playerId, boolean value) {
+        SessionRoom sessionRoom = sessionRoomRepository.findById(sessionId)
+                .orElseThrow(() -> new EntityNotFoundException(SessionRoom.class, sessionId));
+
+        User playerFirst = sessionRoom.getPlayerFirst();
+        if(playerFirst.getId().equals(playerId)) {
+            sessionRoom.setPlayerFirstConnected(value);
+            sessionRoomRepository.saveAndFlush(sessionRoom);
+            return sessionRoom;
+        }
+
+        User playerSecond = sessionRoom.getPlayerSecond();
+        if(playerSecond == null) {
+            throw new SecondPlayerIsNotJoinedException(sessionId);
+        }
+
+        if(playerSecond.getId().equals(playerId)) {
+            sessionRoom.setPlayerSecondConnected(value);
+            sessionRoomRepository.saveAndFlush(sessionRoom);
+            return sessionRoom;
+        }
+
+        throw new PlayerNotRelatedToSessionException(sessionId, playerId);
     }
 }

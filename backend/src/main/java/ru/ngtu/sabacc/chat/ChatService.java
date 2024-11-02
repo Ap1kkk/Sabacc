@@ -13,7 +13,7 @@ import ru.ngtu.sabacc.chat.message.dto.UnsentChatMessageDto;
 import ru.ngtu.sabacc.chat.message.ChatMessageService;
 import ru.ngtu.sabacc.room.SessionRoom;
 import ru.ngtu.sabacc.room.SessionRoomService;
-import ru.ngtu.sabacc.system.event.UserJoinedSessionRoomEvent;
+import ru.ngtu.sabacc.system.event.SessionReadyEvent;
 import ru.ngtu.sabacc.system.exception.notfound.ChatRoomNotFoundException;
 import ru.ngtu.sabacc.user.UserService;
 import ru.ngtu.sabacc.ws.WebSocketMessageSender;
@@ -51,11 +51,12 @@ public class ChatService {
         ChatMessage savedMessage = chatMessageService.saveMessage(unsentChatMessageDto);
         SentChatMessageDto savedMessageDto = sentChatMessageMapper.toDto(savedMessage);
 
-        socketMessageSender.sendMessageBroadcast(WS_SESSION_CHAT_TOPIC.formatted(chatRoomId), savedMessageDto);
+        socketMessageSender.sendMessageSessionBroadcast(chatRoomId, WS_SESSION_CHAT_TOPIC, savedMessageDto);
     }
 
-    @EventListener(UserJoinedSessionRoomEvent.class)
-    void onUserJoinedSessionRoomEvent(UserJoinedSessionRoomEvent event) {
-        userService.getUserById(event.userId());
+    @EventListener(SessionReadyEvent.class)
+    void onUserJoinedSessionRoomEvent(SessionReadyEvent event) {
+
     }
+
 }

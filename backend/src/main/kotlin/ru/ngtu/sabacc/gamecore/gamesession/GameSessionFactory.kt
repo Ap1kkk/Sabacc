@@ -1,10 +1,10 @@
 package ru.ngtu.sabacc.gamecore.gamesession
 
-import ru.ngtu.sabacc.game.GameSessionFactory
 import ru.ngtu.sabacc.game.messaging.IGameMessageExchanger
 import ru.ngtu.sabacc.game.messaging.IGameSession
+import ru.ngtu.sabacc.game.session.factory.IGameSessionFactory
 
-class GameSessionFactory : GameSessionFactory {
+class GameSessionFactory : IGameSessionFactory {
     override fun createSession(messageExchanger: IGameMessageExchanger, sessionId: Long): IGameSession {
         return GameSession(sessionId, messageExchanger)
     }

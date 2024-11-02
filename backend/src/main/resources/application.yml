@@ -42,7 +42,9 @@ security:
 
 websocket:
   stomp:
-    allowed-origin: http://localhost:3000
+    allowed-origin: "${server.protocol}://${server.host}:3000"
+  game:
+    allowed-origin: "${server.protocol}://${server.host}:3000"
   broker:
     destination-prefixes:
       - "/topic"

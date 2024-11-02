@@ -17,20 +17,21 @@ import java.util.List;
 @AllArgsConstructor
 public class SessionRoom extends BaseEntity {
 
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name = "session_room_members",
-            joinColumns = @JoinColumn(name = "room_id"),
-            inverseJoinColumns = @JoinColumn(name = "user_id"))
-    @Builder.Default
-    private List<User> members = new ArrayList<>();
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private SessionRoomStatus status;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "player_first_id", nullable = false)
+    private User playerFirst;
 
-    public void addMember(User user) {
-        if(members == null) {
-            members = new ArrayList<>(List.of(user));
-            return;
-        }
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "player_second_id")
+    private User playerSecond;
 
-        members.add(user);
-    }
+    @Column(name = "is_player_first_connected", nullable = false)
+    private boolean isPlayerFirstConnected = false;
+
+    @Column(name = "is_player_second_connected", nullable = false)
+    private boolean isPlayerSecondConnected = false;
 }

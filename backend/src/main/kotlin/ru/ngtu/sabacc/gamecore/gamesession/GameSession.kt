@@ -1,6 +1,5 @@
 package ru.ngtu.sabacc.gamecore.gamesession
 
-import org.springframework.stereotype.Component
 import ru.ngtu.sabacc.game.GameStateDto
 import ru.ngtu.sabacc.game.messaging.IGameMessageExchanger
 import ru.ngtu.sabacc.game.messaging.IGameSession
@@ -13,7 +12,7 @@ import ru.ngtu.sabacc.gamecore.turn.TurnDTO
 import ru.ngtu.sabacc.gamecore.turn.TurnType
 import kotlin.math.max
 
-@Component
+
 class GameSession(
     private val sessionId: Long,
     private val gameMessageExchanger: IGameMessageExchanger
@@ -143,6 +142,18 @@ class GameSession(
 
     override fun getSessionId(): Long {
         return sessionId
+    }
+
+    override fun start() {
+        TODO("Not yet implemented")
+    }
+
+    override fun pause() {
+        TODO("Not yet implemented")
+    }
+
+    override fun unpause() {
+        TODO("Not yet implemented")
     }
 
     private fun pass() {

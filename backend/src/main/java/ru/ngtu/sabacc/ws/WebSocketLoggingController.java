@@ -19,10 +19,10 @@ import static ru.ngtu.sabacc.constants.WebSocketApiEndpoint.*;
 @Controller
 public class WebSocketLoggingController {
 
-    @MessageMapping(WS_SESSION_TURN_INPUT)
-    public void logSessionTurnInput(String payload, SimpMessageHeaderAccessor headerAccessor) {
-        logMessage(payload, headerAccessor);
-    }
+//    @MessageMapping(WS_SESSION_TURN_INPUT)
+//    public void logSessionTurnInput(String payload, SimpMessageHeaderAccessor headerAccessor) {
+//        logMessage(payload, headerAccessor);
+//    }
 
     @MessageMapping(WS_SESSION_CHAT_INPUT)
     public void logSessionChatInput(String payload, SimpMessageHeaderAccessor headerAccessor) {

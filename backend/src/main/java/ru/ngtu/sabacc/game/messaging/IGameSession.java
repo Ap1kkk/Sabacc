@@ -10,4 +10,7 @@ public interface IGameSession {
     GameStateDto getCurrentState();
     void tryMakeTurn(TurnDTO turnDTO);
     Long getSessionId();
+    void start();
+    void pause();
+    void unpause();
 }
