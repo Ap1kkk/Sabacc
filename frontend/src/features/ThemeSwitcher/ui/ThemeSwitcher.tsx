@@ -1,5 +1,5 @@
 import { memo } from 'react';
-import { AppIcon } from '@/shared/ui/AppIcon';
+import { AppIcon } from '@/shared/ui';
 import LightThemeIcon from '@/shared/assets/icons/sun.svg';
 import DarkThemeIcon from '@/shared/assets/icons/moon.svg';
 import { useTheme } from '@/shared/lib/hooks/useTheme';

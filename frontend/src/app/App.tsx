@@ -3,11 +3,11 @@ import './styles/index.scss'
 import { classNames } from '@/shared/lib/classNames/classNames'
 import { Suspense, useEffect } from 'react';
 import AppRouter from './providers/Router/ui/AppRouter';
-import { BackgroundImg } from '@/shared/ui/BackgroundImg';
 import { setUser } from '@/features/Auth/model/slice/authSlice';
 import { useAppDispatch } from '@/shared/lib/hooks/useAppDispatch';
 import { User } from '@/features/Auth/model/types/auth';
 import { USER_LOCALSTORAGE_KEY } from '@/shared/const/localstorage';
+import MainImg from '@/shared/assets/images/main.jpg';
 
 const App = () => {
   const { theme } = useTheme();
@@ -23,7 +23,7 @@ const App = () => {
 
   return (
     <div id="app" className={classNames('app', {}, [theme])}>
-      <BackgroundImg />
+      <img className='mainBackgroundImage' src={MainImg} />
 
       <Suspense fallback={'Loading ...'}>
         <AppRouter />
