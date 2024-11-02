@@ -8,9 +8,6 @@ x-host:
 x-protocol:
   &protocol http
 
-x-cors:
-  &cors "http://localhost:3000"
-
 x-db-host:
   &db-host postgres
 x-db-username:
@@ -23,6 +20,7 @@ x-profiles:
 
 services:
   backend:
+    image: ghcr.io/ap1kkk/sabacc_backend
     build:
       context: backend
       dockerfile: Dockerfile
@@ -43,8 +41,6 @@ services:
       SPRING_DATASOURCE_DATABASE_HOST: *db-host
       SPRING_DATASOURCE_DATABASE_PORT: 5432
       SPRING_DATASOURCE_DATABASE_NAME: *project-name
-
-      WEBSOCKET_STOMP_ALLOWED_ORIGIN: *cors
 
     volumes:
       - ./uploads:/app/uploads
