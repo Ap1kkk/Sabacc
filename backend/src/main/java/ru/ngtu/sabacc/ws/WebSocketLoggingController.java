@@ -44,6 +44,16 @@ public class WebSocketLoggingController {
         logMessage(payload, headerAccessor);
     }
 
+    @MessageMapping(WS_ROUND_RESULTS_QUEUE)
+    public void logRoundResultsQueue(String payload, SimpMessageHeaderAccessor headerAccessor) {
+        logMessage(payload, headerAccessor);
+    }
+
+    @MessageMapping(WS_GAME_RESULTS_QUEUE)
+    public void logGameResultsQueue(String payload, SimpMessageHeaderAccessor headerAccessor) {
+        logMessage(payload, headerAccessor);
+    }
+
     @MessageMapping(WS_USER_SESSION_ERRORS_QUEUE)
     public void logUserSessionErrorsQueue(String payload, SimpMessageHeaderAccessor headerAccessor) {
         logMessage(payload, headerAccessor);

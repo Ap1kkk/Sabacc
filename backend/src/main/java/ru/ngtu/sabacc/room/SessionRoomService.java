@@ -131,7 +131,7 @@ public class SessionRoomService {
         if(!sessionRoom.isPlayerFirstConnected() && !sessionRoom.isPlayerSecondConnected()) {
             sessionRoom.setStatus(SessionRoomStatus.FINISHED);
             sessionRoomRepository.saveAndFlush(sessionRoom);
-            eventPublisher.publishEvent(new SessionFinishedEvent(sessionId, sessionRoom));
+            eventPublisher.publishEvent(new SessionFinishedEvent(sessionId));
             return;
         }
 

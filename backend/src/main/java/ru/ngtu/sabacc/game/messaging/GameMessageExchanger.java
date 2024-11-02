@@ -4,8 +4,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 import ru.ngtu.sabacc.gamecore.game.GameFinishDto;
+import ru.ngtu.sabacc.gamecore.game.GameRoundDto;
 import ru.ngtu.sabacc.gamecore.turn.TurnDto;
 import ru.ngtu.sabacc.gamecore.game.GameErrorType;
+import ru.ngtu.sabacc.system.event.SessionFinishedEvent;
 import ru.ngtu.sabacc.ws.WebSocketMessageSender;
 
 import static ru.ngtu.sabacc.constants.WebSocketApiEndpoint.*;
@@ -41,12 +43,21 @@ public class GameMessageExchanger implements IGameMessageExchanger {
     }
 
     @Override
-    public void onGameFinished(GameFinishDto finishDto, IGameSession sender) {
+    public void sendRoundResults(GameRoundDto roundDto, IGameSession sender) {
         socketMessageSender.sendMessageSessionBroadcast(
                 sender.getSessionId(),
-                WS_GAME_RESULTS_TOPIC,
+                WS_ROUND_RESULTS_QUEUE,
+                roundDto
+        );
+    }
+
+    @Override
+    public void sendGameFinished(GameFinishDto finishDto, IGameSession sender) {
+        socketMessageSender.sendMessageSessionBroadcast(
+                sender.getSessionId(),
+                WS_GAME_RESULTS_QUEUE,
                 finishDto
         );
-
+        eventPublisher.publishEvent(new SessionFinishedEvent(sender.getSessionId()));
     }
 }

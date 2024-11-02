@@ -2,6 +2,7 @@ package ru.ngtu.sabacc.game.messaging;
 
 import ru.ngtu.sabacc.gamecore.game.GameErrorType;
 import ru.ngtu.sabacc.gamecore.game.GameFinishDto;
+import ru.ngtu.sabacc.gamecore.game.GameRoundDto;
 import ru.ngtu.sabacc.gamecore.turn.TurnDto;
 
 /**
@@ -9,6 +10,7 @@ import ru.ngtu.sabacc.gamecore.turn.TurnDto;
  */
 public interface IGameMessageExchanger {
     void sendErrorMessage(GameErrorType errorType, IGameSession sender);
-    void sendAcceptedTurn(TurnDto turnDTO, IGameSession sender);
-    void onGameFinished(GameFinishDto finishDto, IGameSession sender);
+    void sendAcceptedTurn(TurnDto turnDto, IGameSession sender);
+    void sendRoundResults(GameRoundDto roundDto, IGameSession sender);
+    void sendGameFinished(GameFinishDto finishDto, IGameSession sender);
 }
