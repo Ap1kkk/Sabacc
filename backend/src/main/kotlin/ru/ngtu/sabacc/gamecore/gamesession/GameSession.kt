@@ -19,20 +19,17 @@ class GameSession(
 ) : IGameSession {
 
     private val players: MutableMap<Long, Player> = mutableMapOf()
-    private lateinit var gameBoard: GameBoard
+    private var playersIter = players.keys.iterator()
     private var currentPlayerId: Long = 0
+    private lateinit var gameBoard: GameBoard
+    private lateinit var waitingForMoveType: List<TurnType>
     private var turn: Int = 1
     private var round: Int = 1
-    private lateinit var waitingForMoveType: List<TurnType>
-    private var playersIdIter = players.keys.iterator()
     private var passCount: Int = 0
     private var cardPrice: Int = 1
+    private var pause = false
 
-    init {
-        startGame()
-    }
-
-    private fun startGame() {
+    override fun start() {
         gameBoard = initGameBoard()
         waitingForMoveType = initWaitingForMoveType()
 
@@ -107,6 +104,16 @@ class GameSession(
         )
     }
 
+    override fun pause() {
+        pause = true
+        TODO("Pause turn timers")
+    }
+
+    override fun unpause() {
+        pause = false
+        TODO("Resume turn timers")
+    }
+
     override fun getCurrentState(): GameStateDto {
         return GameStateDto()
     }
@@ -116,6 +123,9 @@ class GameSession(
         val turnType = turnDTO.turnType
         val details = turnDTO.details
 
+        if (pause) {
+            TODO("Handle game on pause")
+        }
         if (playerId != currentPlayerId) {
             TODO("Handle not the current player")
         }
@@ -142,18 +152,6 @@ class GameSession(
 
     override fun getSessionId(): Long {
         return sessionId
-    }
-
-    override fun start() {
-        TODO("Not yet implemented")
-    }
-
-    override fun pause() {
-        TODO("Not yet implemented")
-    }
-
-    override fun unpause() {
-        TODO("Not yet implemented")
     }
 
     private fun pass() {
@@ -289,8 +287,8 @@ class GameSession(
         waitingForMoveType = initWaitingForMoveType()
         cardPrice = 1
 
-        if (playersIdIter.hasNext()) {
-            currentPlayerId = playersIdIter.next()
+        if (playersIter.hasNext()) {
+            currentPlayerId = playersIter.next()
         }
         else {
             nextTurn()
@@ -299,8 +297,8 @@ class GameSession(
 
     private fun nextTurn() {
         if (turn < 3 && passCount != players.size) {
-            playersIdIter = players.keys.iterator()
-            currentPlayerId = playersIdIter.next()
+            playersIter = players.keys.iterator()
+            currentPlayerId = playersIter.next()
             turn++
             passCount = 0
         }
@@ -408,11 +406,11 @@ class GameSession(
     private fun nextRound() {
         round++
         turn = 1
-        playersIdIter = players.keys.iterator()
-        currentPlayerId = playersIdIter.next()
+        playersIter = players.keys.iterator()
+        currentPlayerId = playersIter.next()
         passCount = 0
 
-        startGame()
+        start()
     }
 
     private fun pay(player: Player, price: Int): Boolean {
