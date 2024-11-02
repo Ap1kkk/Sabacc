@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 import ru.ngtu.sabacc.game.messaging.IGameMessageExchanger;
 import ru.ngtu.sabacc.game.messaging.IGameSession;
 import ru.ngtu.sabacc.game.session.factory.IGameSessionFactory;
-import ru.ngtu.sabacc.gamecore.turn.TurnDTO;
+import ru.ngtu.sabacc.gamecore.turn.TurnDto;
 import ru.ngtu.sabacc.system.event.PlayerDisconnectedSessionEvent;
 import ru.ngtu.sabacc.system.event.PlayerReconnectedSessionEvent;
 import ru.ngtu.sabacc.system.event.SessionFinishedEvent;
@@ -34,7 +34,7 @@ public class GameSessionService {
     private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
 
 
-    public void makeTurn(TurnDTO turnDTO) {
+    public void makeTurn(TurnDto turnDTO) {
         long sessionId = turnDTO.getSessionId();
         checkIfSessionExists(sessionId);
         activeSessions.get(sessionId).tryMakeTurn(turnDTO);

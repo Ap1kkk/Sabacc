@@ -1,14 +1,14 @@
-package ru.ngtu.sabacc.gamecore.gamesession
+package ru.ngtu.sabacc.gamecore.game.session
 
-import ru.ngtu.sabacc.game.GameStateDto
 import ru.ngtu.sabacc.game.messaging.IGameMessageExchanger
 import ru.ngtu.sabacc.game.messaging.IGameSession
 import ru.ngtu.sabacc.gamecore.card.Card
 import ru.ngtu.sabacc.gamecore.card.CardType
 import ru.ngtu.sabacc.gamecore.gameboard.GameBoard
+import ru.ngtu.sabacc.gamecore.game.GameStateDto
 import ru.ngtu.sabacc.gamecore.player.Player
 import ru.ngtu.sabacc.gamecore.token.Token
-import ru.ngtu.sabacc.gamecore.turn.TurnDTO
+import ru.ngtu.sabacc.gamecore.turn.TurnDto
 import ru.ngtu.sabacc.gamecore.turn.TurnType
 import kotlin.math.max
 
@@ -115,10 +115,16 @@ class GameSession(
     }
 
     override fun getCurrentState(): GameStateDto {
-        return GameStateDto()
+        return GameStateDto(
+            currentPlayerId,
+            round,
+            gameBoard.bloodDiscardDeck.last(),
+            gameBoard.sandDiscardDeck.last(),
+            players.values.toList()
+        )
     }
 
-    override fun tryMakeTurn(turnDTO: TurnDTO) {
+    override fun tryMakeTurn(turnDTO: TurnDto) {
         val playerId = turnDTO.playerId
         val turnType = turnDTO.turnType
         val details = turnDTO.details

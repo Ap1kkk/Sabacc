@@ -3,9 +3,9 @@ package ru.ngtu.sabacc.game.messaging;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
-import ru.ngtu.sabacc.game.session.GameFinishDto;
-import ru.ngtu.sabacc.gamecore.turn.TurnDTO;
-import ru.ngtu.sabacc.game.GameErrorType;
+import ru.ngtu.sabacc.gamecore.game.GameFinishDto;
+import ru.ngtu.sabacc.gamecore.turn.TurnDto;
+import ru.ngtu.sabacc.gamecore.game.GameErrorType;
 import ru.ngtu.sabacc.ws.WebSocketMessageSender;
 
 import static ru.ngtu.sabacc.constants.WebSocketApiEndpoint.*;
@@ -32,7 +32,7 @@ public class GameMessageExchanger implements IGameMessageExchanger {
     }
 
     @Override
-    public void sendAcceptedTurn(TurnDTO turnDTO, IGameSession sender) {
+    public void sendAcceptedTurn(TurnDto turnDTO, IGameSession sender) {
         socketMessageSender.sendMessageSessionBroadcast(
                 sender.getSessionId(),
                 WS_ACCEPTED_TURNS_QUEUE,

@@ -4,9 +4,9 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import ru.ngtu.sabacc.game.GameStateDto;
 import ru.ngtu.sabacc.game.messaging.IGameSession;
-import ru.ngtu.sabacc.gamecore.turn.TurnDTO;
+import ru.ngtu.sabacc.gamecore.game.GameStateDto;
+import ru.ngtu.sabacc.gamecore.turn.TurnDto;
 
 /**
  * @author Egor Bokov
@@ -25,7 +25,7 @@ public class MockGameSession implements IGameSession {
     }
 
     @Override
-    public void tryMakeTurn(TurnDTO turnDTO) {
+    public void tryMakeTurn(TurnDto turnDTO) {
         log.debug("Mock game session [{}] trying to make turn", sessionId);
     }
 

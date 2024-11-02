@@ -1,6 +1,6 @@
 package ru.ngtu.sabacc.gamecore.turn
 
-data class TurnDTO(
+data class TurnDto(
     val sessionId: Long,
     val playerId: Long,
     val turnType: TurnType,

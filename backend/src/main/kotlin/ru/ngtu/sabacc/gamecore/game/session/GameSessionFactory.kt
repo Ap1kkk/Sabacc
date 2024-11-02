@@ -1,4 +1,4 @@
-package ru.ngtu.sabacc.gamecore.gamesession
+package ru.ngtu.sabacc.gamecore.game.session
 
 import ru.ngtu.sabacc.game.messaging.IGameMessageExchanger
 import ru.ngtu.sabacc.game.messaging.IGameSession
