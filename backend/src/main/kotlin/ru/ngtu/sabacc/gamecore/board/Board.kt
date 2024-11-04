@@ -1,9 +1,8 @@
-package ru.ngtu.sabacc.gamecore.gameboard
+package ru.ngtu.sabacc.gamecore.board
 
 import ru.ngtu.sabacc.gamecore.card.Card
-import ru.ngtu.sabacc.gamecore.card.CardType
 
-data class GameBoard(
+data class Board(
     val sandDeck: MutableList<Card>,
     val bloodDeck: MutableList<Card>,
     val sandDiscardDeck: MutableList<Card>,
