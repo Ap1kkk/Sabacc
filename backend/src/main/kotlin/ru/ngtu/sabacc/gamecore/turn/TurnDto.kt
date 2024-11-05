@@ -4,5 +4,5 @@ data class TurnDto(
     val sessionId: Long,
     val playerId: Long,
     val turnType: TurnType,
-    val details: Any?
+    val details: Map<String, Any>? = null
 )

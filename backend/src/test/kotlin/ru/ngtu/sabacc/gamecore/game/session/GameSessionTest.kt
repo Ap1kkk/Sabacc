@@ -24,15 +24,14 @@ class GameSessionTest {
                 sessionId,
                 firstPlayerId,
                 TurnType.PLAY_TOKEN,
-                Token.NO_TAX
+                mapOf("token" to Token.NO_TAX)
             )
         )
         gameSession.tryMakeTurn(
             TurnDto(
                 sessionId,
                 firstPlayerId,
-                TurnType.GET_SAND,
-                null
+                TurnType.GET_SAND
             )
         )
 
@@ -42,7 +41,7 @@ class GameSessionTest {
                 sessionId,
                 firstPlayerId,
                 TurnType.DISCARD_SAND,
-                1
+                mapOf("index" to 1)
             )
         )
 
@@ -51,8 +50,7 @@ class GameSessionTest {
             TurnDto(
                 sessionId,
                 secondPlayerId,
-                TurnType.GET_BLOOD,
-                null
+                TurnType.GET_BLOOD
             )
         )
 
@@ -62,7 +60,7 @@ class GameSessionTest {
                 sessionId,
                 secondPlayerId,
                 TurnType.DISCARD_BLOOD,
-                0
+                mapOf("index" to 0)
             )
         )
 
@@ -71,8 +69,7 @@ class GameSessionTest {
             TurnDto(
                 sessionId,
                 firstPlayerId,
-                TurnType.PASS,
-                null
+                TurnType.PASS
             )
         )
 
@@ -81,8 +78,7 @@ class GameSessionTest {
             TurnDto(
                 sessionId,
                 secondPlayerId,
-                TurnType.PASS,
-                null
+                TurnType.PASS
             )
         )
     }
