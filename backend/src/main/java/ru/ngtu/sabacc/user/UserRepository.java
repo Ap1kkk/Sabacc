@@ -12,6 +12,15 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     Optional<User> findByUsername(String username);
 
-    @Query("select u.id from User u where u.expireAt < current_timestamp")
+    @Query(value = """
+        SELECT users.id
+        FROM users
+                 JOIN session_rooms
+                      ON users.id = session_rooms.player_first_id
+                          OR users.id = session_rooms.player_second_id
+        WHERE users.expire_at < CURRENT_TIMESTAMP
+        GROUP BY users.id
+        HAVING COUNT(CASE WHEN session_rooms.status != 'FINISHED' THEN 1 END) = 0;
+   """, nativeQuery = true)
     List<Long> findAllExpiredUsers();
 }
