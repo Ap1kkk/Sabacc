@@ -10,6 +10,8 @@ import ru.ngtu.sabacc.gamecore.player.Player
 import ru.ngtu.sabacc.gamecore.token.Token
 import ru.ngtu.sabacc.gamecore.turn.TurnDto
 import ru.ngtu.sabacc.gamecore.turn.TurnType
+import java.util.concurrent.CompletableFuture
+import java.util.concurrent.TimeUnit
 import kotlin.math.max
 
 
@@ -31,6 +33,7 @@ class GameSession(
     private var passCount: Int = 0
     private var cardPrice: Int = 1
     private var pause = false
+    private var dice: Array<Int>? = null
 
     override fun start() {
         board = initGameBoard()
@@ -133,19 +136,31 @@ class GameSession(
 
         if (pause) {
             gameMessageExchanger.sendErrorMessage(
-                GameErrorType.GAME_ON_PAUSE, this
+                GameErrorDto(
+                    sessionId,
+                    playerId,
+                    GameErrorType.GAME_ON_PAUSE
+                ), this
             )
             return
         }
         if (playerId != currentPlayerId) {
             gameMessageExchanger.sendErrorMessage(
-                GameErrorType.NOT_YOUR_TURN, this
+                GameErrorDto(
+                    sessionId,
+                    playerId,
+                    GameErrorType.NOT_YOUR_TURN
+                ), this
             )
             return
         }
         if (turnType !in waitingForMoveType) {
             gameMessageExchanger.sendErrorMessage(
-                GameErrorType.WRONG_MOVE, this
+                GameErrorDto(
+                    sessionId,
+                    playerId,
+                    GameErrorType.WRONG_MOVE
+                ), this
             )
             return
         }
@@ -159,7 +174,8 @@ class GameSession(
             TurnType.DISCARD_SAND -> discardSandCard(turnDTO)
             TurnType.DISCARD_BLOOD -> discardBloodCard(turnDTO)
             TurnType.PLAY_TOKEN -> playToken(turnDTO)
-            TurnType.SELECT_DICE_FOR_IMPOSTER -> replaceImposterWithValue(turnDTO)
+            TurnType.SELECT_DICE -> processImposterCard(turnDTO)
+            else -> return
         }
     }
 
@@ -180,7 +196,11 @@ class GameSession(
 
         if (!pay(player, cardPrice)) {
             gameMessageExchanger.sendErrorMessage(
-                GameErrorType.NOT_ENOUGH_MONEY, this
+                GameErrorDto(
+                    sessionId,
+                    playerId,
+                    GameErrorType.NOT_ENOUGH_MONEY
+                ), this
             )
             return
         }
@@ -201,7 +221,11 @@ class GameSession(
 
         if (!pay(player, cardPrice)) {
             gameMessageExchanger.sendErrorMessage(
-                GameErrorType.NOT_ENOUGH_MONEY, this
+                GameErrorDto(
+                    sessionId,
+                    playerId,
+                    GameErrorType.NOT_ENOUGH_MONEY
+                ), this
             )
             return
         }
@@ -222,7 +246,11 @@ class GameSession(
 
         if (!pay(player, cardPrice)) {
             gameMessageExchanger.sendErrorMessage(
-                GameErrorType.NOT_ENOUGH_MONEY, this
+                GameErrorDto(
+                    sessionId,
+                    playerId,
+                    GameErrorType.NOT_ENOUGH_MONEY
+                ), this
             )
             return
         }
@@ -243,7 +271,11 @@ class GameSession(
 
         if (!pay(player, cardPrice)) {
             gameMessageExchanger.sendErrorMessage(
-                GameErrorType.NOT_ENOUGH_MONEY, this
+                GameErrorDto(
+                    sessionId,
+                    playerId,
+                    GameErrorType.NOT_ENOUGH_MONEY
+                ), this
             )
             return
         }
@@ -261,7 +293,7 @@ class GameSession(
     private fun discardSandCard(turnDTO: TurnDto) {
         val playerId = turnDTO.playerId
         val player = players[playerId]!!
-        val index = turnDTO.details as Int
+        val index = turnDTO.details!!["index"] as Int
         val card = player.sandCards.removeAt(index)
         board.sandDiscardDeck.add(card)
 
@@ -272,7 +304,7 @@ class GameSession(
     private fun discardBloodCard(turnDTO: TurnDto) {
         val playerId = turnDTO.playerId
         val player = players[playerId]!!
-        val index = turnDTO.details as Int
+        val index = turnDTO.details!!["index"] as Int
         val card = player.bloodCards.removeAt(index)
         board.bloodDiscardDeck.add(card)
 
@@ -283,10 +315,14 @@ class GameSession(
     private fun playToken(turnDTO: TurnDto) {
         val playerId = turnDTO.playerId
         val player = players[playerId]!!
-        val token = turnDTO.details as Token
+        val token = turnDTO.details!!["token"] as Token
         if (token !in player.tokens) {
             gameMessageExchanger.sendErrorMessage(
-                GameErrorType.TOKEN_NOT_FOUND, this
+                GameErrorDto(
+                    sessionId,
+                    playerId,
+                    GameErrorType.TOKEN_NOT_FOUND
+                ), this
             )
             return
         }
@@ -339,57 +375,73 @@ class GameSession(
     }
 
     private fun nextTurn() {
+        playersIter = players.keys.iterator()
+        currentPlayerId = playersIter.next()
+
         if (turn < 3 && passCount != players.size) {
-            playersIter = players.keys.iterator()
-            currentPlayerId = playersIter.next()
             turn++
             passCount = 0
         }
         else {
-            replaceImposterWithValue()
+            CompletableFuture.runAsync {
+                TimeUnit.SECONDS.sleep(1)
+                processImposterCard()
+            }
         }
     }
 
-    private fun replaceImposterWithValue(turnDTO: TurnDto? = null) {
-        for (player in players.values) {
-            val bloodCard = player.bloodCards.last()
-            val sandCard = player.sandCards.last()
+    private fun processImposterCard(turnDTO: TurnDto? = null) {
+        val player = players[currentPlayerId]!!
+        val bloodCard = player.bloodCards.last()
+        val sandCard = player.sandCards.last()
 
-            if (bloodCard is Card.ImposterCard) {
-                if (turnDTO == null) {
-                    waitingForMoveType = listOf(
-                        TurnType.SELECT_DICE_FOR_IMPOSTER
-                    )
-                    TODO("Throw dice, ask player for number")
-                    return
+        when {
+            bloodCard is Card.ImposterCard -> replaceImposterCard(turnDTO, player.bloodCards)
+            sandCard is Card.ImposterCard -> replaceImposterCard(turnDTO, player.sandCards)
+            else -> {
+                if (playersIter.hasNext()) {
+                    currentPlayerId = playersIter.next()
+                    processImposterCard()
                 }
-                val value = turnDTO.details as Int
-                player.bloodCards.removeLast()
-                player.bloodCards.add(
-                    Card.ValueCard(CardType.BLOOD, value)
-                )
-
-                gameMessageExchanger.sendAcceptedTurn(turnDTO, this)
-            }
-            if (sandCard is Card.ImposterCard) {
-                if (turnDTO == null) {
-                    waitingForMoveType = listOf(
-                        TurnType.SELECT_DICE_FOR_IMPOSTER
-                    )
-                    TODO("Throw dice, ask player for number")
-                    return
+                else {
+                    roundResults()
                 }
-                val value = turnDTO.details as Int
-                player.bloodCards.removeLast()
-                player.bloodCards.add(
-                    Card.ValueCard(CardType.SAND, value)
-                )
-
-                gameMessageExchanger.sendAcceptedTurn(turnDTO, this)
             }
         }
+    }
 
-        roundResults()
+    private fun replaceImposterCard(turnDTO: TurnDto?, cards: MutableList<Card>) {
+        if (turnDTO == null) {
+            dice = arrayOf(
+                (1..6).random(),
+                (1..6).random()
+            )
+
+            waitingForMoveType = listOf(
+                TurnType.SELECT_DICE
+            )
+            gameMessageExchanger.sendAcceptedTurn(
+                TurnDto(
+                    sessionId,
+                    currentPlayerId,
+                    TurnType.AWAITING_DICE,
+                    mapOf(
+                        "first" to dice!![0],
+                        "second" to dice!![1]
+                    )
+                ), this
+            )
+            return
+        }
+        val index = turnDTO.details!!["index"] as Int
+        val value = dice!![index]
+        cards.removeLast()
+        cards.add(
+            Card.ValueCard(CardType.SAND, value)
+        )
+
+        dice = null
+        gameMessageExchanger.sendAcceptedTurn(turnDTO, this)
     }
 
     private fun roundResults() {
@@ -408,32 +460,39 @@ class GameSession(
 
         // Collect taxes
         val winner = playersSortedByRating.first()
+        val winnerId = players.keys.find { players[it] == winner }!!
         winner.remainChips += winner.spentChips
-        pay(winner, winner.handRating!!.first)
+        forcePay(winner, winner.handRating!!.first)
 
         val looser = playersSortedByRating.last()
         if (looser.handRating!!.first == 0) {
-            pay(looser, 1)
+            forcePay(looser, 1)
         }
         else {
-            pay(looser, looser.handRating!!.first)
+            forcePay(looser, looser.handRating!!.first)
         }
 
-        gameMessageExchanger.sendRoundResults(
-            GameRoundDto(round, playersSortedByRating), this
-        )
+        CompletableFuture.runAsync {
+            TimeUnit.SECONDS.sleep(1)
 
-        winner.spentChips = 0
-        looser.spentChips = 0
-
-        // Show the winner
-        if (looser.remainChips == 0) {
-            gameMessageExchanger.sendGameFinished(
-                GameFinishDto(sessionId), this
+            gameMessageExchanger.sendRoundResults(
+                GameRoundDto(round, playersSortedByRating), this
             )
-        }
-        else {
-            nextRound()
+
+            TimeUnit.SECONDS.sleep(1)
+
+            winner.spentChips = 0
+            looser.spentChips = 0
+
+            // Show the winner
+            if (looser.remainChips == 0) {
+                gameMessageExchanger.sendGameFinished(
+                    GameFinishDto(sessionId, winnerId), this
+                )
+            }
+            else {
+                nextRound()
+            }
         }
     }
 
@@ -477,5 +536,11 @@ class GameSession(
         player.remainChips -= price
         player.spentChips += price
         return true
+    }
+
+    private fun forcePay(player: Player, price: Int) {
+        val affordablePrice = Math.min(price, player.remainChips)
+        player.remainChips -= affordablePrice
+        player.spentChips += affordablePrice
     }
 }

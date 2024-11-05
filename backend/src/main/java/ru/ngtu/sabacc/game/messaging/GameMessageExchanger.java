@@ -3,6 +3,7 @@ package ru.ngtu.sabacc.game.messaging;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
+import ru.ngtu.sabacc.gamecore.game.GameErrorDto;
 import ru.ngtu.sabacc.gamecore.game.GameFinishDto;
 import ru.ngtu.sabacc.gamecore.game.GameRoundDto;
 import ru.ngtu.sabacc.gamecore.turn.TurnDto;
@@ -23,13 +24,13 @@ public class GameMessageExchanger implements IGameMessageExchanger {
     private final ApplicationEventPublisher eventPublisher;
 
     @Override
-    public void sendErrorMessage(GameErrorType errorType, IGameSession sender) {
+    public void sendErrorMessage(GameErrorDto errorDto, IGameSession sender) {
         socketMessageSender.sendMessageToSession(
                 //TODO user id from error dto
                 1L,
                 sender.getSessionId(),
                 WS_USER_SESSION_ERRORS_QUEUE,
-                errorType
+                errorDto
         );
     }
 

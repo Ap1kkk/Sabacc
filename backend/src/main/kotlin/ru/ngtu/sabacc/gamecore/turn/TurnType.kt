@@ -9,5 +9,6 @@ enum class TurnType {
     DISCARD_SAND,
     DISCARD_BLOOD,
     PLAY_TOKEN,
-    SELECT_DICE_FOR_IMPOSTER
+    SELECT_DICE,
+    AWAITING_DICE
 }
