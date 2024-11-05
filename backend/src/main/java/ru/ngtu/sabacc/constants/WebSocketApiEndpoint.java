@@ -4,6 +4,8 @@ package ru.ngtu.sabacc.constants;
  * @author Egor Bokov
  */
 public interface WebSocketApiEndpoint {
+    // Prefix to all endpoints: /app
+
     String TOPIC = "/topic";
     String QUEUE = "/queue";
     String INPUT = "/input";

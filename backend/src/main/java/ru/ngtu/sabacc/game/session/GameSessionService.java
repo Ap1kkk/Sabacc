@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import ru.ngtu.sabacc.game.messaging.IGameMessageExchanger;
 import ru.ngtu.sabacc.game.messaging.IGameSession;
 import ru.ngtu.sabacc.game.session.factory.IGameSessionFactory;
+import ru.ngtu.sabacc.gamecore.game.GameStateDto;
 import ru.ngtu.sabacc.gamecore.turn.TurnDto;
 import ru.ngtu.sabacc.system.event.PlayerDisconnectedSessionEvent;
 import ru.ngtu.sabacc.system.event.PlayerReconnectedSessionEvent;
@@ -31,8 +32,12 @@ public class GameSessionService {
     private final IGameSessionFactory sessionFactory;
     private final IGameMessageExchanger gameMessageExchanger;
     private final Map<Long, IGameSession> activeSessions = new ConcurrentHashMap<>();
-    private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+//    private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
 
+    public GameStateDto getCurrentGameState(Long sessionId) {
+        checkIfSessionExists(sessionId);
+        return activeSessions.get(sessionId).getCurrentState();
+    }
 
     public void makeTurn(TurnDto turnDTO) {
         long sessionId = turnDTO.getSessionId();

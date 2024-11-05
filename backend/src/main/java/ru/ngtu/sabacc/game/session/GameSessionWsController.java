@@ -12,13 +12,13 @@ import static ru.ngtu.sabacc.constants.WebSocketApiEndpoint.WS_SESSION_TURN_INPU
  */
 @Controller
 @RequiredArgsConstructor
-public class GameSessionController {
+public class GameSessionWsController {
 
     private final GameSessionService gameSessionService;
 
     @MessageMapping(WS_SESSION_TURN_INPUT)
     //TODO remove sessionId from dto. Get it from request path
-    public void logSessionTurnInput(TurnDto payload) {
+    public void makeTurn(TurnDto payload) {
         gameSessionService.makeTurn(payload);
     }
 }
