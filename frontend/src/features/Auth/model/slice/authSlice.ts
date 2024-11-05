@@ -22,12 +22,25 @@ const authSlice = createSlice({
       state.user = action.payload;
       localStorage.setItem(USER_LOCALSTORAGE_KEY, JSON.stringify(action.payload));
     },
+    checkSessionExpiration: (state) => {
+      const storedUser = localStorage.getItem(USER_LOCALSTORAGE_KEY);
+      if (storedUser) {
+        const user: User = JSON.parse(storedUser);
+        const currentTime = new Date().getTime();
+        const expirationTime = new Date(user.expireAt).getTime();
+
+        if (currentTime >= expirationTime) {
+          state.user = null;
+          state.error = 'Session expired';
+          localStorage.removeItem(USER_LOCALSTORAGE_KEY);
+        }
+      }
+    },
   },
   extraReducers: (builder) => {
     builder
       .addMatcher(authApi.endpoints.createAnonymousUser.matchFulfilled, (state, action: PayloadAction<User>) => {
         state.user = action.payload;
-        console.log(action.payload)
         localStorage.setItem(USER_LOCALSTORAGE_KEY, JSON.stringify(action.payload))
       })
       .addMatcher(authApi.endpoints.createAnonymousUser.matchRejected, (state, action: PayloadAction<any>) => {
@@ -36,6 +49,5 @@ const authSlice = createSlice({
   },
 });
 
-export const { logout, setUser } = authSlice.actions;
-
-export const authReducer  = authSlice.reducer;
+export const { logout, setUser,checkSessionExpiration } = authSlice.actions;
+export const authReducer = authSlice.reducer

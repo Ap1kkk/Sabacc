@@ -7,7 +7,7 @@ import 'swiper/css/navigation';
 import './RoolsPage.scss'
 import { EffectCards, Pagination, Navigation } from 'swiper/modules';
 import cls from './RoolsPage.module.scss'
-import { Button } from '@/shared/ui/Button';
+import { Button } from '@/shared/ui';
 
 export const RoolsPage = memo(() => {
   const handleBack = () => {

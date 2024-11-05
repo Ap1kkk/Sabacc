@@ -1,32 +1,41 @@
-import { configureStore, Reducer, ReducersMapObject } from '@reduxjs/toolkit';
+// src/app/providers/Store/config/store.ts
+
+import { configureStore, Reducer, ReducersMapObject, AnyAction } from '@reduxjs/toolkit';
 import { rtkApi } from '@/shared/api/rtkApi';
 import { StateSchema } from './StateSchema';
 import { createReducerManager } from './reducerManager';
 import { authReducer } from '@/features/Auth/model/slice/authSlice';
-import { authApi } from '@/features/Auth/model/services/authService';
 import { chatReducer } from '@/features/Chat/model/slice/chatSlice';
-import { chatApi } from '@/features/Chat/model/services/chatService';
+
+// Определим тип для asyncReducers, исключив из него ключи 'auth' и 'chat'
+type AsyncReducers = Omit<ReducersMapObject<StateSchema>, 'auth' | 'chat'>;
 
 export function createReduxStore(
   initialState?: StateSchema,
-  asyncReducers?: ReducersMapObject<StateSchema>,
+  asyncReducers?: AsyncReducers,
 ) {
-  const rootReducers: ReducersMapObject<StateSchema> = {
-    ...asyncReducers,
+  // Статические редьюсеры
+  const staticReducers: ReducersMapObject<StateSchema> = {
     auth: authReducer,
     chat: chatReducer,
-    [authApi.reducerPath]: authApi.reducer,
-    [chatApi.reducerPath]: chatApi.reducer,
+    [rtkApi.reducerPath]: rtkApi.reducer, // Добавляем только один раз
+  };
+
+  // Комбинируем статические редьюсеры с асинхронными
+  const rootReducers: ReducersMapObject<StateSchema> = {
+    ...staticReducers,
+    ...(asyncReducers || {}),
   };
 
   const reducerManager = createReducerManager(rootReducers);
 
   const middleware = (getDefaultMiddleware: any) =>
-    getDefaultMiddleware().concat(rtkApi.middleware);
-
+    getDefaultMiddleware().concat(
+      rtkApi.middleware, // Добавляем только один раз
+    );
 
   const store = configureStore({
-    reducer: reducerManager.reduce as Reducer<StateSchema>,
+    reducer: reducerManager.reduce as Reducer<StateSchema, AnyAction>,
     devTools: __IS_DEV__,
     preloadedState: initialState,
     middleware,

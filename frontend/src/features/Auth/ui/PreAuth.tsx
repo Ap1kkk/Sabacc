@@ -1,11 +1,10 @@
-import { HStack } from '@/shared/ui/Stack';
+
 import { ChangeEvent, memo, useRef, useState } from 'react';
-import cls from './PreAuth.module.scss'
-import { AppLink } from '@/shared/ui/AppLink';
-import { Button } from '@/shared/ui/Button';
-import { useCreateAnonymousUserMutation } from '../model/services/authService';
 import { useNavigate } from 'react-router-dom';
 import { getRouteGame } from '@/shared/const/router';
+import { AppLink, Button,HStack } from '@/shared/ui';
+import cls from './PreAuth.module.scss'
+import { useCreateAnonymousUserMutation } from '../model/services/authService';
 
 
 export const PreAuth = memo(() => {
