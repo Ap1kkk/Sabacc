@@ -1,5 +1,6 @@
 package ru.ngtu.sabacc.gamecore.game.session
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import org.junit.jupiter.api.Test
 import ru.ngtu.sabacc.gamecore.game.messaging.MockGameMessageExchanger
 import ru.ngtu.sabacc.gamecore.token.Token
@@ -63,6 +64,10 @@ class GameSessionTest {
                 mapOf("index" to 0)
             )
         )
+
+        var objectMapper = ObjectMapper();
+        val writeValueAsString = objectMapper.writer().writeValueAsString(gameSession.currentState)
+        println("mappedValue" + writeValueAsString)
 
         println(gameSession.currentState)
         gameSession.tryMakeTurn(

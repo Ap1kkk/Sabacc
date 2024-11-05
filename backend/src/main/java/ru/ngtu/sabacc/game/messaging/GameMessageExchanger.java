@@ -7,7 +7,6 @@ import ru.ngtu.sabacc.gamecore.game.GameErrorDto;
 import ru.ngtu.sabacc.gamecore.game.GameFinishDto;
 import ru.ngtu.sabacc.gamecore.game.GameRoundDto;
 import ru.ngtu.sabacc.gamecore.turn.TurnDto;
-import ru.ngtu.sabacc.gamecore.game.GameErrorType;
 import ru.ngtu.sabacc.system.event.SessionFinishedEvent;
 import ru.ngtu.sabacc.ws.WebSocketMessageSender;
 
@@ -25,9 +24,8 @@ public class GameMessageExchanger implements IGameMessageExchanger {
 
     @Override
     public void sendErrorMessage(GameErrorDto errorDto, IGameSession sender) {
-        socketMessageSender.sendMessageToSession(
-                //TODO user id from error dto
-                1L,
+        socketMessageSender.sendMessageToUserInSession(
+                errorDto.getPlayerId(),
                 sender.getSessionId(),
                 WS_USER_SESSION_ERRORS_QUEUE,
                 errorDto

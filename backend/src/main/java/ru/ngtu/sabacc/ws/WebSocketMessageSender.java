@@ -16,9 +16,9 @@ import static ru.ngtu.sabacc.constants.WebSocketApiEndpoint.SESSION_ID;
 public class WebSocketMessageSender {
     private final SimpMessagingTemplate messagingTemplate;
 
-    public void sendMessageToSession(Long userId, Long sessionId, String destination, Object payload) {
+    public void sendMessageToUserInSession(Long userId, Long sessionId, String destination, Object payload) {
         String replacedDestination = destination.replace(SESSION_ID, sessionId.toString());
-        log.debug("WS: [{}] sending message to session: sessionId={}, userId={}, payload={}", destination, sessionId, userId, payload.toString());
+        log.debug("WS: [{}] sending message to user in session: sessionId={}, userId={}, payload={}", destination, sessionId, userId, payload.toString());
         messagingTemplate.convertAndSendToUser(userId.toString(), replacedDestination, payload);
     }
 

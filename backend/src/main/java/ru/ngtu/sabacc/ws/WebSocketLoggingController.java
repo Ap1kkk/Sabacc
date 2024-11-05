@@ -54,10 +54,11 @@ public class WebSocketLoggingController {
         logMessage(payload, headerAccessor);
     }
 
-    @MessageMapping(WS_USER_SESSION_ERRORS_QUEUE)
-    public void logUserSessionErrorsQueue(String payload, SimpMessageHeaderAccessor headerAccessor) {
-        logMessage(payload, headerAccessor);
-    }
+    // User specific endpoints not loggable
+//    @MessageMapping(WS_USER_SESSION_ERRORS_QUEUE)
+//    public void logUserSessionErrorsQueue(String payload, SimpMessageHeaderAccessor headerAccessor) {
+//        logMessage(payload, headerAccessor);
+//    }
 
     private void logMessage(String payload, SimpMessageHeaderAccessor headerAccessor) {
         String destination = headerAccessor.getDestination();
