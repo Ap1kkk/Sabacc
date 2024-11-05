@@ -25,7 +25,7 @@ public class SessionRoomService {
     private final ApplicationEventPublisher eventPublisher;
 
 
-    @Transactional
+    @Transactional(readOnly = true)
     public List<SessionRoom> getAllRooms() {
         return sessionRoomRepository.findAll();
     }

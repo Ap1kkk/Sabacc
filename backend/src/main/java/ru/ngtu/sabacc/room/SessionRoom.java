@@ -5,9 +5,6 @@ import lombok.*;
 import ru.ngtu.sabacc.system.model.BaseEntity;
 import ru.ngtu.sabacc.user.User;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @Entity
 @Table(name = "session_rooms")
 @Getter
@@ -21,11 +18,11 @@ public class SessionRoom extends BaseEntity {
     @Column(nullable = false)
     private SessionRoomStatus status;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "player_first_id", nullable = false)
     private User playerFirst;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "player_second_id")
     private User playerSecond;
 
