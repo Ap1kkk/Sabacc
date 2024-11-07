@@ -44,7 +44,11 @@ public class GameSessionService {
     void onSessionDeleted(SessionRoomDeletedEvent event) {
         Long sessionId = event.sessionRoom().getId();
         log.info("Session [{}] was deleted. Deleting game session...", sessionId);
-        deleteSession(sessionId);
+
+        try {
+            deleteSession(sessionId);
+        } catch (Exception ignored) {
+        }
     }
 
     @EventListener(SessionReadyEvent.class)

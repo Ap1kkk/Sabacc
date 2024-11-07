@@ -48,6 +48,16 @@ public class SessionRoomController {
         return roomService.createSessionRoom(userId);
     }
 
+    @PostMapping("/leave/{roomId}")
+    public void leaveRooms(@PathVariable Long roomId, @RequestParam Long userId) {
+        roomService.leaveRoom(roomId, userId);
+    }
+
+    @PostMapping("/leave/all")
+    public void leaveAllRooms(@RequestParam Long userId) {
+        roomService.leaveAllRooms(userId);
+    }
+
     @DeleteMapping("/{roomId}")
     public void deleteRoom(@PathVariable Long roomId) {
         roomService.deleteSessionRoomById(roomId);

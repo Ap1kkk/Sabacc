@@ -25,7 +25,6 @@ public class SessionRoomService {
     private final UserService userService;
     private final ApplicationEventPublisher eventPublisher;
 
-
     @Transactional(readOnly = true)
     public List<SessionRoom> getAllRooms() {
         return sessionRoomRepository.findAll();
@@ -57,10 +56,7 @@ public class SessionRoomService {
     public List<SessionRoom> getAvailableRoomsForJoin(Long userId) {
         if(userService.getUserById(userId) == null)
             throw new EntityNotFoundException(User.class, userId);
-        getUserActiveSessions(userId)
-                .ifPresent(s -> {
-                    throw new UserHaveUnfinishedSessionException(userId);
-                });
+        throwIfUserHaveUnfinishedSessions(userId);
         return sessionRoomRepository.findAllAvailableForJoin(SessionRoomStatus.WAITING_SECOND_USER);
     }
 
@@ -91,6 +87,9 @@ public class SessionRoomService {
 
         SessionRoom sessionRoom = getRoomById(roomId);
         User user = userService.getUserById(userId);
+
+        throwIfUserHaveUnfinishedSessions(userId);
+
         if(sessionRoom.getPlayerSecond() != null) {
             if(sessionRoom.getPlayerSecond().equals(user))
                 throw new UserAlreadyJoinedSessionException(roomId, userId);
@@ -103,6 +102,37 @@ public class SessionRoomService {
         sessionRoom.setPlayerSecond(user);
         sessionRoom.setStatus(SessionRoomStatus.ALL_USERS_JOINED);
         sessionRoomRepository.saveAndFlush(sessionRoom);
+    }
+
+    @Transactional
+    public void leaveAllRooms(Long userId) {
+        List<SessionRoom> userSessionRooms = getAllUserSessionRooms(userId);
+        userSessionRooms.forEach(r -> leaveRoom(r.getId(), userId));
+    }
+
+    @Transactional
+    public void leaveRoom(Long roomId, Long userId) {
+        log.info("User [{}] leaving session [{}]", userId, roomId);
+
+        SessionRoom sessionRoom = getRoomById(roomId);
+
+        if(!roomContainsUser(sessionRoom, userId))
+            throw new PlayerNotRelatedToSessionException(roomId, userId);
+
+        SessionRoomStatus status = sessionRoom.getStatus();
+
+        if(status.equals(SessionRoomStatus.FINISHED))
+            return;
+
+        if(status.equals(SessionRoomStatus.ALL_USERS_JOINED)
+            && !sessionRoom.getPlayerFirst().getId().equals(userId)) {
+            sessionRoom.setPlayerSecond(null);
+            sessionRoom.setStatus(SessionRoomStatus.WAITING_SECOND_USER);
+            sessionRoomRepository.saveAndFlush(sessionRoom);
+            return;
+        }
+
+        deleteSessionRoom(sessionRoom);
     }
 
     @Transactional
@@ -195,5 +225,22 @@ public class SessionRoomService {
         }
 
         throw new PlayerNotRelatedToSessionException(sessionId, playerId);
+    }
+
+    private void throwIfUserHaveUnfinishedSessions(Long userId) {
+        getUserActiveSessions(userId)
+                .ifPresent(s -> {
+                    throw new UserHaveUnfinishedSessionException(userId);
+                });
+    }
+
+    private boolean roomContainsUser(SessionRoom sessionRoom, Long userId) {
+        if(sessionRoom.getPlayerFirst().getId().equals(userId))
+            return true;
+        User secondPlayer = sessionRoom.getPlayerSecond();
+        if(secondPlayer == null)
+            return false;
+
+        return secondPlayer.getId().equals(userId);
     }
 }
