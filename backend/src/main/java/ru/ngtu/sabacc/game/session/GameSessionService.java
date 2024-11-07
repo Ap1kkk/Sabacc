@@ -9,17 +9,12 @@ import ru.ngtu.sabacc.game.messaging.IGameSession;
 import ru.ngtu.sabacc.game.session.factory.IGameSessionFactory;
 import ru.ngtu.sabacc.gamecore.game.GameStateDto;
 import ru.ngtu.sabacc.gamecore.turn.TurnDto;
-import ru.ngtu.sabacc.system.event.PlayerDisconnectedSessionEvent;
-import ru.ngtu.sabacc.system.event.PlayerReconnectedSessionEvent;
-import ru.ngtu.sabacc.system.event.SessionFinishedEvent;
-import ru.ngtu.sabacc.system.event.SessionReadyEvent;
+import ru.ngtu.sabacc.system.event.*;
 import ru.ngtu.sabacc.system.exception.session.GameSessionAlreadyExistsException;
 import ru.ngtu.sabacc.system.exception.session.GameSessionNotFoundException;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
 
 /**
  * @author Egor Bokov
@@ -43,6 +38,13 @@ public class GameSessionService {
         long sessionId = turnDTO.getSessionId();
         checkIfSessionExists(sessionId);
         activeSessions.get(sessionId).tryMakeTurn(turnDTO);
+    }
+
+    @EventListener(SessionRoomDeletedEvent.class)
+    void onSessionDeleted(SessionRoomDeletedEvent event) {
+        Long sessionId = event.sessionRoom().getId();
+        log.info("Session [{}] was deleted. Deleting game session...", sessionId);
+        deleteSession(sessionId);
     }
 
     @EventListener(SessionReadyEvent.class)
@@ -106,6 +108,12 @@ public class GameSessionService {
         checkIfSessionExists(sessionId);
         activeSessions.remove(sessionId);
         log.info("Game session [{}] finished.", sessionId);
+    }
+
+    private void deleteSession(Long sessionId) {
+        checkIfSessionExists(sessionId);
+        activeSessions.remove(sessionId);
+        log.info("Game session [{}] deleted.", sessionId);
     }
 
     private void checkIfSessionExists(Long sessionId) {

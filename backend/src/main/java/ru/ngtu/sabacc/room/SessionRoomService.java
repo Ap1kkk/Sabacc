@@ -14,6 +14,7 @@ import ru.ngtu.sabacc.user.UserService;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -49,9 +50,22 @@ public class SessionRoomService {
         return sessionRoomRepository.findAllByPlayerFirstIdOrPlayerSecondId(userId, userId);
     }
 
+    public Optional<SessionRoom> getUserActiveSessions(Long userId) {
+        return sessionRoomRepository.findByPlayerFirstIdOrPlayerSecondIdAndStatusNot(userId, userId, SessionRoomStatus.FINISHED);
+    }
+
+    public List<SessionRoom> getAvailableRoomsForJoin(Long userId) {
+        if(userService.getUserById(userId) == null)
+            throw new EntityNotFoundException(User.class, userId);
+        getUserActiveSessions(userId)
+                .ifPresent(s -> {
+                    throw new UserHaveUnfinishedSessionException(userId);
+                });
+        return sessionRoomRepository.findAllAvailableForJoin(SessionRoomStatus.WAITING_SECOND_USER);
+    }
+
     @Transactional
     public SessionRoom createSessionRoom(Long userId) {
-        //TODO fix: user can create only 1 session
         User user = userService.getUserById(userId);
 
         log.info("User [{}] creating session room", userId);
@@ -77,8 +91,11 @@ public class SessionRoomService {
 
         SessionRoom sessionRoom = getRoomById(roomId);
         User user = userService.getUserById(userId);
-        if(sessionRoom.getPlayerSecond() != null)
-            throw new UserAlreadyJoinedSessionException(sessionRoom.getId(), user.getId());
+        if(sessionRoom.getPlayerSecond() != null) {
+            if(sessionRoom.getPlayerSecond().equals(user))
+                throw new UserAlreadyJoinedSessionException(roomId, userId);
+            throw new SessionIsFullException(sessionRoom.getId(), user.getId());
+        }
 
         if(sessionRoom.getPlayerFirst().getId().equals(userId))
             throw new JoinSelfHostedSessionException(userId);
@@ -86,6 +103,13 @@ public class SessionRoomService {
         sessionRoom.setPlayerSecond(user);
         sessionRoom.setStatus(SessionRoomStatus.ALL_USERS_JOINED);
         sessionRoomRepository.saveAndFlush(sessionRoom);
+    }
+
+    @Transactional
+    public void deleteSessionRoomById(Long roomId) {
+        SessionRoom sessionRoom = sessionRoomRepository.findById(roomId)
+                .orElseThrow(() -> new EntityNotFoundException(SessionRoom.class, roomId));
+        deleteSessionRoom(sessionRoom);
     }
 
     @Transactional

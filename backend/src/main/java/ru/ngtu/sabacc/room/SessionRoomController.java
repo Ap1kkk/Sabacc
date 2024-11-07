@@ -33,6 +33,11 @@ public class SessionRoomController {
         return roomService.getSessionMembers(roomId);
     }
 
+    @GetMapping("/available-for-join")
+    public List<SessionRoom> getAvailableRoomsForJoin(@RequestParam Long userId) {
+        return roomService.getAvailableRoomsForJoin(userId);
+    }
+
     @PostMapping("/{roomId}/join")
     public void joinSession(@PathVariable Long roomId, @RequestParam Long userId) {
         roomService.joinSession(roomId, userId);
@@ -41,5 +46,10 @@ public class SessionRoomController {
     @PostMapping("/create")
     public SessionRoom createRoom(@RequestParam Long userId) {
         return roomService.createSessionRoom(userId);
+    }
+
+    @DeleteMapping("/{roomId}")
+    public void deleteRoom(@PathVariable Long roomId) {
+        roomService.deleteSessionRoomById(roomId);
     }
 }
