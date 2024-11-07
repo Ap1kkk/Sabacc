@@ -3,7 +3,6 @@ package ru.ngtu.sabacc.gamecore.game.session
 import ru.ngtu.sabacc.game.messaging.IGameMessageExchanger
 import ru.ngtu.sabacc.game.messaging.IGameSession
 import ru.ngtu.sabacc.gamecore.card.Card
-import ru.ngtu.sabacc.gamecore.card.CardType
 import ru.ngtu.sabacc.gamecore.game.*
 import ru.ngtu.sabacc.gamecore.board.Board
 import ru.ngtu.sabacc.gamecore.player.Player
@@ -57,36 +56,18 @@ class GameSession(
 
         for (value in 1..6) {
             for (i in 1..3) {
-                sandDeck.add(
-                    Card.ValueCard(
-                        CardType.SAND, value
-                    ))
-                bloodDeck.add(
-                    Card.ValueCard(
-                        CardType.BLOOD, value
-                    ))
+                sandDeck.add(Card.ValueCard(value))
+                bloodDeck.add(Card.ValueCard(value))
             }
         }
 
         for (i in 1..3) {
-            sandDeck.add(
-                Card.ImposterCard(
-                CardType.SAND
-            ))
-            bloodDeck.add(
-                Card.ImposterCard(
-                CardType.BLOOD
-            ))
+            sandDeck.add(Card.ImposterCard())
+            bloodDeck.add(Card.ImposterCard())
         }
 
-        sandDeck.add(
-            Card.SylopCard(
-            CardType.SAND
-        ))
-        bloodDeck.add(
-            Card.SylopCard(
-            CardType.BLOOD
-        ))
+        sandDeck.add(Card.SylopCard())
+        bloodDeck.add(Card.SylopCard())
 
         sandDeck.shuffle()
         bloodDeck.shuffle()
@@ -437,7 +418,7 @@ class GameSession(
         val value = dice!![index]
         cards.removeLast()
         cards.add(
-            Card.ValueCard(CardType.SAND, value)
+            Card.ValueCard(value)
         )
 
         dice = null
