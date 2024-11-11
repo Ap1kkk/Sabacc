@@ -34,7 +34,7 @@ spring:
 
 
 user:
-  expiration-in-hours: 1
+  expiration-in-hours: 24
 
 security:
   cors:
