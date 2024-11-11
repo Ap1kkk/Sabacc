@@ -46,23 +46,25 @@ PlayerId = UserId
 ```json
 {
   "status": "STARTED",
-  "sessionRoom": {
-    "id": 666,
-    "status": "IN_PROGRESS",
-    "playerFirst": {
-      "id": 0,
-      "username": "string",
-      "createdAt": "2024-11-11T09:26:01.074Z",
-      "expireAt": "2024-11-11T09:26:01.074Z"
-    },
-    "playerSecond": {
-      "id": 0,
-      "username": "string",
-      "createdAt": "2024-11-11T09:26:01.074Z",
-      "expireAt": "2024-11-11T09:26:01.074Z"
-    },
-    "playerSecondConnected": true,
-    "playerFirstConnected": true
+  "details": {
+    "sessionRoom": {
+      "id": 666,
+      "status": "IN_PROGRESS",
+      "playerFirst": {
+        "id": 0,
+        "username": "string",
+        "createdAt": "2024-11-11T09:26:01.074Z",
+        "expireAt": "2024-11-11T09:26:01.074Z"
+      },
+      "playerSecond": {
+        "id": 0,
+        "username": "string",
+        "createdAt": "2024-11-11T09:26:01.074Z",
+        "expireAt": "2024-11-11T09:26:01.074Z"
+      },
+      "playerSecondConnected": true,
+      "playerFirstConnected": true
+    }
   }
 }
 ```
@@ -75,11 +77,13 @@ PlayerId = UserId
 ```json
 {
   "status": "PLAYER_RECONNECTED",
-  "opponent": {
-    "id": 0,
-    "username": "string",
-    "createdAt": "2024-11-11T09:26:01.074Z",
-    "expireAt": "2024-11-11T09:26:01.074Z"
+  "details": {
+    "opponent": {
+      "id": 0,
+      "username": "string",
+      "createdAt": "2024-11-11T09:26:01.074Z",
+      "expireAt": "2024-11-11T09:26:01.074Z"
+    }
   }
 }
 ```
@@ -92,11 +96,13 @@ PlayerId = UserId
 ```json
 {
   "status": "PLAYER_DISCONNECTED",
-  "opponent": {
-    "id": 0,
-    "username": "string",
-    "createdAt": "2024-11-11T09:26:01.074Z",
-    "expireAt": "2024-11-11T09:26:01.074Z"
+  "details": {
+    "opponent": {
+      "id": 0,
+      "username": "string",
+      "createdAt": "2024-11-11T09:26:01.074Z",
+      "expireAt": "2024-11-11T09:26:01.074Z"
+    }
   }
 }
 ```
