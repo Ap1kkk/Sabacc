@@ -16,7 +16,7 @@ public interface WebSocketApiEndpoint {
     // Prefix for this endpoint is: /user/{userId}
     String WS_USER_SESSION_ERRORS_QUEUE = QUEUE + "/session/" + SESSION_ID + "/errors";
     String WS_SESSION_CHAT_QUEUE = QUEUE + "/session/" + SESSION_ID + "/chat";
-    String WS_GAME_START_QUEUE = QUEUE + "/session/" + SESSION_ID + "/game-start";
+    String WS_GAME_PROGRESS_QUEUE = QUEUE + "/session/" + SESSION_ID + "/game-progress";
     String WS_GAME_RESULTS_QUEUE = QUEUE + "/session/" + SESSION_ID + "/game-results";
     String WS_ROUND_RESULTS_QUEUE = QUEUE + "/session/" + SESSION_ID + "/round-results";
 

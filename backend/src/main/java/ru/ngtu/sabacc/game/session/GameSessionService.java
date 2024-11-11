@@ -6,18 +6,21 @@ import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 import ru.ngtu.sabacc.game.messaging.IGameMessageExchanger;
 import ru.ngtu.sabacc.game.messaging.IGameSession;
+import ru.ngtu.sabacc.game.messaging.dto.GameProgressDto;
+import ru.ngtu.sabacc.game.messaging.dto.GameProgressStatus;
 import ru.ngtu.sabacc.game.session.factory.IGameSessionFactory;
 import ru.ngtu.sabacc.gamecore.game.GameStateDto;
 import ru.ngtu.sabacc.gamecore.turn.TurnDto;
 import ru.ngtu.sabacc.system.event.*;
 import ru.ngtu.sabacc.system.exception.session.GameSessionAlreadyExistsException;
 import ru.ngtu.sabacc.system.exception.session.GameSessionNotFoundException;
+import ru.ngtu.sabacc.user.UserService;
 import ru.ngtu.sabacc.ws.WebSocketMessageSender;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static ru.ngtu.sabacc.constants.WebSocketApiEndpoint.WS_GAME_START_QUEUE;
+import static ru.ngtu.sabacc.constants.WebSocketApiEndpoint.WS_GAME_PROGRESS_QUEUE;
 
 /**
  * @author Egor Bokov
@@ -31,6 +34,7 @@ public class GameSessionService {
     private final IGameMessageExchanger gameMessageExchanger;
     private final WebSocketMessageSender socketMessageSender;
     private final Map<Long, IGameSession> activeSessions = new ConcurrentHashMap<>();
+    private final UserService userService;
 
     public GameStateDto getCurrentGameState(Long sessionId) {
         checkIfSessionExists(sessionId);
@@ -60,7 +64,15 @@ public class GameSessionService {
         log.info("Session [{}] is ready. Initializing game session...", sessionId);
         createSession(sessionId);
         startSession(sessionId);
-        socketMessageSender.sendMessageSessionBroadcast(sessionId, WS_GAME_START_QUEUE, event);
+        socketMessageSender.sendMessageSessionBroadcast(
+                sessionId,
+                WS_GAME_PROGRESS_QUEUE,
+                GameProgressDto
+                        .builder()
+                        .status(GameProgressStatus.STARTED)
+                        .details(Map.of("sessionRoom", event.sessionRoom()))
+                        .build()
+        );
     }
 
     @EventListener(PlayerDisconnectedSessionEvent.class)
@@ -69,6 +81,15 @@ public class GameSessionService {
         Long playerId = event.playerId();
         log.info("Pausing session [{}] due to player [{}] disconnect", sessionId, playerId);
         pauseSession(sessionId);
+        socketMessageSender.sendMessageSessionBroadcast(
+                sessionId,
+                WS_GAME_PROGRESS_QUEUE,
+                GameProgressDto
+                        .builder()
+                        .status(GameProgressStatus.PLAYER_DISCONNECTED)
+                        .details(Map.of("opponent", userService.getUserById(playerId)))
+                        .build()
+        );
     }
 
     @EventListener(PlayerReconnectedSessionEvent.class)
@@ -77,6 +98,15 @@ public class GameSessionService {
         Long playerId = event.playerId();
         log.info("Continuing session [{}] due to player [{}] reconnect", sessionId, playerId);
         unpauseSession(sessionId);
+        socketMessageSender.sendMessageSessionBroadcast(
+                sessionId,
+                WS_GAME_PROGRESS_QUEUE,
+                GameProgressDto
+                        .builder()
+                        .status(GameProgressStatus.PLAYER_RECONNECTED)
+                        .details(Map.of("opponent", userService.getUserById(playerId)))
+                        .build()
+        );
     }
 
     @EventListener(SessionFinishedEvent.class)

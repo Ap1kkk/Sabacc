@@ -38,15 +38,16 @@ PlayerId = UserId
 
 ---
 
-**[Старт игры](src/main/java/ru/ngtu/sabacc/system/event/SessionReadyEvent.java)** \
-Эндпоинт: `WS_GAME_START_QUEUE` \
+**[Старт игры](src/main/java/ru/ngtu/sabacc/game/messaging/dto/GameProgressDto.java)** \
+Эндпоинт: `WS_GAME_PROGRESS_QUEUE` \
+Статусы прогресса игры: [enum](src/main/java/ru/ngtu/sabacc/game/messaging/dto/GameProgressStatus.java)
 Статусы сессии: [enum](src/main/java/ru/ngtu/sabacc/room/SessionRoomStatus.java)
 
 ```json
 {
-  "sessionId": 666,
+  "status": "STARTED",
   "sessionRoom": {
-    "id": 0,
+    "id": 666,
     "status": "IN_PROGRESS",
     "playerFirst": {
       "id": 0,
@@ -62,6 +63,40 @@ PlayerId = UserId
     },
     "playerSecondConnected": true,
     "playerFirstConnected": true
+  }
+}
+```
+---
+
+**[Реконнект игрока](src/main/java/ru/ngtu/sabacc/game/messaging/dto/GameProgressDto.java)** \
+Эндпоинт: `WS_GAME_PROGRESS_QUEUE` \
+Статусы прогресса игры: [enum](src/main/java/ru/ngtu/sabacc/game/messaging/dto/GameProgressStatus.java)
+
+```json
+{
+  "status": "PLAYER_RECONNECTED",
+  "opponent": {
+    "id": 0,
+    "username": "string",
+    "createdAt": "2024-11-11T09:26:01.074Z",
+    "expireAt": "2024-11-11T09:26:01.074Z"
+  }
+}
+```
+---
+
+**[Дисконнект игрока](src/main/java/ru/ngtu/sabacc/game/messaging/dto/GameProgressDto.java)** \
+Эндпоинт: `WS_GAME_PROGRESS_QUEUE` \
+Статусы прогресса игры: [enum](src/main/java/ru/ngtu/sabacc/game/messaging/dto/GameProgressStatus.java)
+
+```json
+{
+  "status": "PLAYER_DISCONNECTED",
+  "opponent": {
+    "id": 0,
+    "username": "string",
+    "createdAt": "2024-11-11T09:26:01.074Z",
+    "expireAt": "2024-11-11T09:26:01.074Z"
   }
 }
 ```
