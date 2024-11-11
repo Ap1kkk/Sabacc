@@ -38,7 +38,36 @@ PlayerId = UserId
 
 ---
 
-**[Ошибка хода](src/main/kotlin/ru/ngtu/sabacc/gamecore/game/GameErrorDto.kt)**
+**[Старт игры](src/main/java/ru/ngtu/sabacc/system/event/SessionReadyEvent.java)** \
+Эндпоинт: `WS_GAME_START_QUEUE` \
+Статусы сессии: [enum](src/main/java/ru/ngtu/sabacc/room/SessionRoomStatus.java)
+
+```json
+{
+  "sessionId": 666,
+  "sessionRoom": {
+    "id": 0,
+    "status": "IN_PROGRESS",
+    "playerFirst": {
+      "id": 0,
+      "username": "string",
+      "createdAt": "2024-11-11T09:26:01.074Z",
+      "expireAt": "2024-11-11T09:26:01.074Z"
+    },
+    "playerSecond": {
+      "id": 0,
+      "username": "string",
+      "createdAt": "2024-11-11T09:26:01.074Z",
+      "expireAt": "2024-11-11T09:26:01.074Z"
+    },
+    "playerSecondConnected": true,
+    "playerFirstConnected": true
+  }
+}
+```
+---
+
+**[Ошибка хода](src/main/kotlin/ru/ngtu/sabacc/gamecore/game/GameErrorDto.kt)** \
 Эндпоинт: `WS_USER_SESSION_ERRORS_QUEUE` \
 Типы ошибок: [enum](src/main/kotlin/ru/ngtu/sabacc/gamecore/game/GameErrorType.kt)
 ```json

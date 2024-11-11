@@ -12,9 +12,12 @@ import ru.ngtu.sabacc.gamecore.turn.TurnDto;
 import ru.ngtu.sabacc.system.event.*;
 import ru.ngtu.sabacc.system.exception.session.GameSessionAlreadyExistsException;
 import ru.ngtu.sabacc.system.exception.session.GameSessionNotFoundException;
+import ru.ngtu.sabacc.ws.WebSocketMessageSender;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+
+import static ru.ngtu.sabacc.constants.WebSocketApiEndpoint.WS_GAME_START_QUEUE;
 
 /**
  * @author Egor Bokov
@@ -26,8 +29,8 @@ public class GameSessionService {
 
     private final IGameSessionFactory sessionFactory;
     private final IGameMessageExchanger gameMessageExchanger;
+    private final WebSocketMessageSender socketMessageSender;
     private final Map<Long, IGameSession> activeSessions = new ConcurrentHashMap<>();
-//    private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
 
     public GameStateDto getCurrentGameState(Long sessionId) {
         checkIfSessionExists(sessionId);
@@ -57,6 +60,7 @@ public class GameSessionService {
         log.info("Session [{}] is ready. Initializing game session...", sessionId);
         createSession(sessionId);
         startSession(sessionId);
+        socketMessageSender.sendMessageSessionBroadcast(sessionId, WS_GAME_START_QUEUE, event);
     }
 
     @EventListener(PlayerDisconnectedSessionEvent.class)
