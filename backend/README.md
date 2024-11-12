@@ -115,7 +115,7 @@ PlayerId = UserId
 {
   "sessionId": 666,
   "playerId": 777, 
-  "errorType": "GAME_ON_PAUSE", // NOT_YOUR_TURN, WRONG_MOVE, WRONG_MOVE, TOKEN_NOT_FOUND
+  "errorType": "GAME_ON_PAUSE", // NOT_YOUR_TURN, WRONG_MOVE, NOT_ENOUGH_MONEY, TOKEN_NOT_FOUND
   "details": {}
 }
 ```
@@ -184,9 +184,10 @@ DTO на ход одинаковые для этих эндпоинтов: \
 {
   "sessionId": 666,
   "playerId": 777,
-  "turnType": "SELECT_DICE",
+  "turnType": "AWAITING_DICE",
   "details": {
-    "index": 0 // 1
+    "first": 1,
+    "second": 6
   }
 }
 ```
@@ -241,7 +242,7 @@ DTO на ход одинаковые для этих эндпоинтов: \
           "cardValueType": "SYLOP"
         }
       ],
-      "handRating": [4, 4]
+      "handRating": [0, 4]
     },
     {
       "tokens": [
@@ -251,7 +252,7 @@ DTO на ход одинаковые для этих эндпоинтов: \
       "spentChips": 1,
       "bloodCards": [
         {
-          "cardValueType": "IMPOSTER"
+          "cardValueType": "SYLOP"
         }
       ],
       "sandCards": [
@@ -259,7 +260,7 @@ DTO на ход одинаковые для этих эндпоинтов: \
           "cardValueType": "SYLOP"
         }
       ],
-      "handRating": [3, 3]
+      "handRating": [0, 0]
     }
   ]
 }
