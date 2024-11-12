@@ -7,6 +7,5 @@ import ru.ngtu.sabacc.game.messaging.IGameSession;
  * @author Egor Bokov
  */
 public interface IGameSessionFactory {
-    //TODO add required init parameters
-    IGameSession createSession(IGameMessageExchanger messageExchanger, Long sessionId);
+    IGameSession createSession(IGameMessageExchanger messageExchanger, Long sessionId, Long playerFirstId, Long playerSecondId);
 }
