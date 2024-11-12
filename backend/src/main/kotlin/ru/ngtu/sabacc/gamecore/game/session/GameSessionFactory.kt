@@ -7,7 +7,7 @@ import ru.ngtu.sabacc.game.session.factory.IGameSessionFactory
 
 @Component
 object GameSessionFactory : IGameSessionFactory {
-    override fun createSession(messageExchanger: IGameMessageExchanger, sessionId: Long): IGameSession {
-        return GameSession(sessionId, messageExchanger)
+    override fun createSession(messageExchanger: IGameMessageExchanger, sessionId: Long, playerFirstId: Long, playerSecondId: Long): IGameSession {
+        return GameSession(sessionId, playerFirstId, playerSecondId, messageExchanger)
     }
 }

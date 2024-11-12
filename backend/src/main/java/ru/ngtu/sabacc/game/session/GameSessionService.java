@@ -11,6 +11,7 @@ import ru.ngtu.sabacc.game.messaging.dto.GameProgressStatus;
 import ru.ngtu.sabacc.game.session.factory.IGameSessionFactory;
 import ru.ngtu.sabacc.gamecore.game.GameStateDto;
 import ru.ngtu.sabacc.gamecore.turn.TurnDto;
+import ru.ngtu.sabacc.room.SessionRoom;
 import ru.ngtu.sabacc.system.event.*;
 import ru.ngtu.sabacc.system.exception.session.GameSessionAlreadyExistsException;
 import ru.ngtu.sabacc.system.exception.session.GameSessionNotFoundException;
@@ -61,8 +62,9 @@ public class GameSessionService {
     @EventListener(SessionReadyEvent.class)
     void onSessionReady(SessionReadyEvent event) {
         Long sessionId = event.sessionId();
+        SessionRoom sessionRoom = event.sessionRoom();
         log.info("Session [{}] is ready. Initializing game session...", sessionId);
-        createSession(sessionId);
+        createSession(sessionId, sessionRoom.getPlayerFirst().getId(), sessionRoom.getPlayerSecond().getId());
         startSession(sessionId);
         socketMessageSender.sendMessageSessionBroadcast(
                 sessionId,
@@ -70,7 +72,7 @@ public class GameSessionService {
                 GameProgressDto
                         .builder()
                         .status(GameProgressStatus.STARTED)
-                        .details(Map.of("sessionRoom", event.sessionRoom()))
+                        .details(Map.of("sessionRoom", sessionRoom))
                         .build()
         );
     }
@@ -133,11 +135,11 @@ public class GameSessionService {
         log.info("Game session [{}] started.", sessionId);
     }
 
-    private void createSession(Long sessionId) {
+    private void createSession(Long sessionId, Long playerFirstId, Long playerSecondId) {
         if(activeSessions.containsKey(sessionId)) {
             throw new GameSessionAlreadyExistsException(sessionId);
         }
-        IGameSession session = sessionFactory.createSession(gameMessageExchanger, sessionId);
+        IGameSession session = sessionFactory.createSession(gameMessageExchanger, sessionId, playerFirstId, playerSecondId);
         activeSessions.put(sessionId, session);
         log.info("Game session [{}] created.", sessionId);
     }
