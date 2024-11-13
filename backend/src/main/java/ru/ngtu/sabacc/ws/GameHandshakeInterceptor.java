@@ -11,6 +11,7 @@ import org.springframework.web.socket.server.HandshakeInterceptor;
 import org.springframework.web.util.UriComponentsBuilder;
 import ru.ngtu.sabacc.room.SessionRoomService;
 import ru.ngtu.sabacc.system.exception.AppException;
+import ru.ngtu.sabacc.system.exception.advice.BaseExceptionHandler;
 
 import java.util.Map;
 
@@ -20,7 +21,7 @@ import java.util.Map;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class GameHandshakeInterceptor implements HandshakeInterceptor {
+public class GameHandshakeInterceptor extends BaseExceptionHandler implements HandshakeInterceptor {
 
     private final SessionRoomService sessionService;
 
@@ -39,15 +40,15 @@ public class GameHandshakeInterceptor implements HandshakeInterceptor {
             try {
                 sessionService.handlePlayerSocketConnection(Long.valueOf(sessionId), Long.valueOf(playerId));
             } catch (AppException e) {
-                log.error(e.getMessage());
-                response.setStatusCode(e.getErrorCode().getHttpStatus());
+                logError(buildMessage(e));
+                addErrorResponse(response, e.getErrorCode().getHttpStatus(), e.getErrorCode().getCode());
                 return false;
             }
             log.info("WS: Player [{}] connected to session [{}]", playerId, sessionId);
             return true;
         } else {
             log.error("WS: handshake declined. Parameters sessionId and playerId must not be null!");
-            response.setStatusCode(HttpStatus.BAD_REQUEST);
+            addErrorResponse(response, HttpStatus.BAD_REQUEST, "parameters_missed");
             return false;
         }
     }
@@ -55,5 +56,10 @@ public class GameHandshakeInterceptor implements HandshakeInterceptor {
     @Override
     public void afterHandshake(ServerHttpRequest request, ServerHttpResponse response, WebSocketHandler wsHandler, Exception exception) {
 
+    }
+
+    private void addErrorResponse(ServerHttpResponse response, HttpStatus status, String errorCode) {
+        response.setStatusCode(status);
+        response.getHeaders().add("X-Error-Code", errorCode);
     }
 }

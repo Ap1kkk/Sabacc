@@ -82,17 +82,20 @@ public class SessionRoomService {
     }
 
     @Transactional
-    public void joinSession(Long roomId, Long userId) {
-        log.info("User [{}] joining session [{}]", userId, roomId);
+    public void joinSession(Long sessionId, Long userId) {
+        log.info("User [{}] joining session [{}]", userId, sessionId);
 
-        SessionRoom sessionRoom = getRoomById(roomId);
+        SessionRoom sessionRoom = getRoomById(sessionId);
         User user = userService.getUserById(userId);
 
         throwIfUserHaveUnfinishedSessions(userId);
 
+        if(sessionRoom.getStatus().equals(SessionRoomStatus.FINISHED))
+            throw new JoinFinishedSessionException(userId, sessionId);
+
         if(sessionRoom.getPlayerSecond() != null) {
             if(sessionRoom.getPlayerSecond().equals(user))
-                throw new UserAlreadyJoinedSessionException(roomId, userId);
+                throw new UserAlreadyJoinedSessionException(sessionId, userId);
             throw new SessionIsFullException(sessionRoom.getId(), user.getId());
         }
 
@@ -164,14 +167,17 @@ public class SessionRoomService {
     public void handlePlayerSocketConnection(Long sessionId, Long playerId) {
         SessionRoom sessionRoom = switchPlayerSocketConnected(sessionId, playerId, true);
 
+        if(sessionRoom.getStatus().equals(SessionRoomStatus.FINISHED))
+            throw new JoinFinishedSessionException(playerId, sessionId);
+
         if(sessionRoom.isPlayerFirstConnected() && sessionRoom.isPlayerSecondConnected()) {
             if (sessionRoom.getStatus().equals(SessionRoomStatus.ALL_USERS_JOINED)) {
-                sessionRoom.setStatus(SessionRoomStatus.ALL_USERS_CONNECTED);
+                updateSessionStatus(sessionRoom, SessionRoomStatus.ALL_USERS_CONNECTED);
                 sessionRoomRepository.saveAndFlush(sessionRoom);
                 eventPublisher.publishEvent(new SessionReadyEvent(sessionId, sessionRoom));
             }
             else {
-                sessionRoom.setStatus(SessionRoomStatus.IN_PROGRESS);
+                updateSessionStatus(sessionRoom, SessionRoomStatus.IN_PROGRESS);
                 sessionRoomRepository.saveAndFlush(sessionRoom);
                 eventPublisher.publishEvent(new PlayerReconnectedSessionEvent(sessionId, playerId, sessionRoom));
             }
@@ -183,22 +189,28 @@ public class SessionRoomService {
         SessionRoom sessionRoom = switchPlayerSocketConnected(sessionId, playerId, false);
 
         if(!sessionRoom.isPlayerFirstConnected() && !sessionRoom.isPlayerSecondConnected()) {
-            sessionRoom.setStatus(SessionRoomStatus.FINISHED);
+            updateSessionStatus(sessionRoom, SessionRoomStatus.FINISHED);
             sessionRoomRepository.saveAndFlush(sessionRoom);
             eventPublisher.publishEvent(new SessionFinishedEvent(sessionId));
             return;
         }
 
-        sessionRoom.setStatus(SessionRoomStatus.PLAYER_DISCONNECTED);
+        updateSessionStatus(sessionRoom, SessionRoomStatus.PLAYER_DISCONNECTED);
         sessionRoomRepository.saveAndFlush(sessionRoom);
         eventPublisher.publishEvent(new PlayerDisconnectedSessionEvent(sessionId, playerId, sessionRoom));
     }
 
+    @EventListener(SessionStartedEvent.class)
+    void onSessionStarted(SessionStartedEvent event) {
+        SessionRoom sessionRoom = getRoomById(event.sessionId());
+        updateSessionStatus(sessionRoom, SessionRoomStatus.IN_PROGRESS);
+        sessionRoomRepository.saveAndFlush(sessionRoom);
+    }
+
     @EventListener(SessionFinishedEvent.class)
     void onSessionFinished(SessionFinishedEvent event) {
-        SessionRoom sessionRoom = sessionRoomRepository.findById(event.sessionId())
-                .orElseThrow(() -> new EntityNotFoundException(SessionRoom.class, event.sessionId()));
-        sessionRoom.setStatus(SessionRoomStatus.FINISHED);
+        SessionRoom sessionRoom = getRoomById(event.sessionId());
+        updateSessionStatus(sessionRoom, SessionRoomStatus.FINISHED);
         sessionRoomRepository.saveAndFlush(sessionRoom);
     }
 
@@ -242,5 +254,10 @@ public class SessionRoomService {
             return false;
 
         return secondPlayer.getId().equals(userId);
+    }
+
+    private void updateSessionStatus(SessionRoom sessionRoom, SessionRoomStatus status) {
+        sessionRoom.setStatus(status);
+        log.debug("Session [{}]: updated status to {}", sessionRoom.getId(), sessionRoom.getStatus());
     }
 }

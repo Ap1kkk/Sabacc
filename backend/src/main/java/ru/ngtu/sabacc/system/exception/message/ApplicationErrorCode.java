@@ -20,7 +20,9 @@ public enum ApplicationErrorCode {
     NOT_JOINED("not_joined", HttpStatus.BAD_REQUEST),
     NOT_RELATED_TO_SESSION("not_related_to_session", HttpStatus.BAD_REQUEST),
     SELF_JOIN("self_join", HttpStatus.BAD_REQUEST),
-    HAVE_UNFINISHED_SESSION("have_unfinished_session", HttpStatus.BAD_REQUEST);
+    HAVE_UNFINISHED_SESSION("have_unfinished_session", HttpStatus.BAD_REQUEST),
+    JOIN_FINISHED("join_finished", HttpStatus.BAD_REQUEST),
+    CONNECT_FINISHED("connect_finished", HttpStatus.BAD_REQUEST);
 
     private final String code;
     private final HttpStatus httpStatus;

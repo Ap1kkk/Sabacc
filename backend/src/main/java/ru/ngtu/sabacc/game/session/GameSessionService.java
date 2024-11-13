@@ -2,6 +2,7 @@ package ru.ngtu.sabacc.game.session;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 import ru.ngtu.sabacc.game.messaging.IGameMessageExchanger;
@@ -36,6 +37,8 @@ public class GameSessionService {
     private final WebSocketMessageSender socketMessageSender;
     private final Map<Long, IGameSession> activeSessions = new ConcurrentHashMap<>();
     private final UserService userService;
+
+    private final ApplicationEventPublisher eventPublisher;
 
     public GameStateDto getCurrentGameState(Long sessionId) {
         checkIfSessionExists(sessionId);
@@ -75,6 +78,8 @@ public class GameSessionService {
                         .details(Map.of("sessionRoom", sessionRoom))
                         .build()
         );
+
+        eventPublisher.publishEvent(new SessionStartedEvent(sessionId));
     }
 
     @EventListener(PlayerDisconnectedSessionEvent.class)
