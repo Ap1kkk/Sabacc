@@ -30,6 +30,7 @@ const authSlice = createSlice({
         const expirationTime = new Date(user.expireAt).getTime();
 
         if (currentTime >= expirationTime) {
+          console.error('Session expired')
           state.user = null;
           state.error = 'Session expired';
           localStorage.removeItem(USER_LOCALSTORAGE_KEY);

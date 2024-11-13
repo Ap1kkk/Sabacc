@@ -1,10 +1,10 @@
 import { memo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import PreAuth from '@/features/Auth/ui/PreAuth';
-import { getRouteGame, getRouteLogin, getRouteRools } from '@/shared/const/router';
-import { useSessionCheck } from '@/shared/lib/hooks/useSessionCheck';
+import { useSelector } from 'react-redux';
+import { selectCurrentUser, Auth } from '@/features/Auth';
+import { getRouteGame, getRouteRools } from '@/shared/const/router';
 import { classNames } from '@/shared/lib/classNames/classNames';
-import { HStack, Button, Modal, AppLink } from '@/shared/ui';
+import { Button, Modal, AppLink } from '@/shared/ui';
 import cls from './MainMenu.module.scss';
 
 interface MainMenuProps {
@@ -15,10 +15,10 @@ export const MainMenu = memo((props: MainMenuProps) => {
   const { className } = props;
   const [isOpen, setIsOpen] = useState(false);
   const navigate = useNavigate();
-  const isValidSession = useSessionCheck();
+  const user = useSelector(selectCurrentUser)
 
   const handleOpen = () => {
-    if (isValidSession) {
+    if (user) {
       navigate(getRouteGame());
     } else {
       setIsOpen(true);
@@ -30,21 +30,16 @@ export const MainMenu = memo((props: MainMenuProps) => {
   return (
     <div className={classNames(cls.Menu, {}, [className])}>
       <Button variant="btn" className={cls.mainLink} onClick={handleOpen}>
-        Играть
+        Играть {user && 'как ' + user.username}
       </Button>
 
       <Modal isOpen={isOpen} onClose={handleClose}>
-        <PreAuth />
+        <Auth />
       </Modal>
 
-      <HStack gap="8" max>
-        <AppLink variant="btn" to={getRouteLogin()}>
-          Аккаунт
-        </AppLink>
-        <AppLink variant="btn" to={getRouteRools()}>
-          Правила
-        </AppLink>
-      </HStack>
+      <AppLink variant="btn" to={getRouteRools()}>
+        Правила
+      </AppLink>
     </div>
   );
 });

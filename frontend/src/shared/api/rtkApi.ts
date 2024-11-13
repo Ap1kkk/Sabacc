@@ -1,9 +1,9 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
 export const rtkApi = createApi({
-  reducerPath: '/api',
+  reducerPath: 'rtkApi',
   baseQuery: fetchBaseQuery({
-    baseUrl: __API__,
+    baseUrl: `${__API__}/api/v1`,
   }),
   endpoints: (builder) => ({}),
 });

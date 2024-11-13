@@ -1,14 +1,10 @@
-// src/app/providers/Store/config/store.ts
-
-import { configureStore, Reducer, ReducersMapObject, AnyAction } from '@reduxjs/toolkit';
+import { configureStore, Reducer, ReducersMapObject, Action } from '@reduxjs/toolkit';
 import { rtkApi } from '@/shared/api/rtkApi';
 import { StateSchema } from './StateSchema';
 import { createReducerManager } from './reducerManager';
 import { authReducer } from '@/features/Auth/model/slice/authSlice';
-import { chatReducer } from '@/features/Chat/model/slice/chatSlice';
 
-// Определим тип для asyncReducers, исключив из него ключи 'auth' и 'chat'
-type AsyncReducers = Omit<ReducersMapObject<StateSchema>, 'auth' | 'chat'>;
+type AsyncReducers = Omit<ReducersMapObject<StateSchema>, 'auth'>;
 
 export function createReduxStore(
   initialState?: StateSchema,
@@ -17,8 +13,7 @@ export function createReduxStore(
   // Статические редьюсеры
   const staticReducers: ReducersMapObject<StateSchema> = {
     auth: authReducer,
-    chat: chatReducer,
-    [rtkApi.reducerPath]: rtkApi.reducer, // Добавляем только один раз
+    [rtkApi.reducerPath]: rtkApi.reducer,
   };
 
   // Комбинируем статические редьюсеры с асинхронными
@@ -31,11 +26,11 @@ export function createReduxStore(
 
   const middleware = (getDefaultMiddleware: any) =>
     getDefaultMiddleware().concat(
-      rtkApi.middleware, // Добавляем только один раз
+      rtkApi.middleware,
     );
 
   const store = configureStore({
-    reducer: reducerManager.reduce as Reducer<StateSchema, AnyAction>,
+    reducer: reducerManager.reduce as Reducer<StateSchema, Action>,
     devTools: __IS_DEV__,
     preloadedState: initialState,
     middleware,

@@ -1,6 +1,6 @@
 import { useSelector } from 'react-redux';
 import { Navigate, useLocation } from 'react-router-dom';
-import { selectCurrentUser } from '@/features/Auth/model/selectors/selectCurrentUser';
+import { selectCurrentUser } from '@/features/Auth/model/selectors/authSelector';
 import { getRouteMain } from '@/shared/const/router';
 
 interface OnlyAuthProps {
@@ -13,7 +13,7 @@ export function OnlyAuth({ children }: OnlyAuthProps) {
 
     if (!user) {
         return (
-            <Navigate to={getRouteMain ()} state={{ from: location }} replace />
+            <Navigate to={getRouteMain()} state={{ from: location }} replace />
         );
     }
 

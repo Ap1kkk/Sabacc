@@ -6,12 +6,9 @@ import {
 } from '@reduxjs/toolkit';
 import { AxiosInstance } from 'axios';
 import { AuthSchema } from '@/features/Auth/model/types/authSchema';
-import { ChatSchema } from '@/features/Chat/model/types/chatSchema';
-
 
 export interface StateSchema {
   auth: AuthSchema;
-  chat: ChatSchema;
   [key: string]: any;
 }
 
