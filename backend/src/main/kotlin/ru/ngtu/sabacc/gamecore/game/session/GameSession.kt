@@ -16,12 +16,14 @@ import kotlin.math.max
 
 class GameSession(
     private val sessionId: Long,
+    playerFirstId: Long,
+    playerSecondId: Long,
     private val gameMessageExchanger: IGameMessageExchanger
 ) : IGameSession {
 
     private val players: MutableMap<Long, Player> = mutableMapOf(
-        0L to Player(),
-        1L to Player()
+        playerFirstId to Player(),
+        playerSecondId to Player()
     )
     private var playersIter = players.keys.iterator()
     private var currentPlayerId: Long = playersIter.next()

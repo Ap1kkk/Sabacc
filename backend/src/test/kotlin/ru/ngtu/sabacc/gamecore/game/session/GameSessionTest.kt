@@ -12,7 +12,7 @@ class GameSessionTest {
     private val firstPlayerId: Long = 0
     private val secondPlayerId: Long = 1
     private val gameSession = GameSessionFactory.createSession(
-        MockGameMessageExchanger(), sessionId
+        MockGameMessageExchanger(), sessionId, firstPlayerId, secondPlayerId
     )
 
     @Test

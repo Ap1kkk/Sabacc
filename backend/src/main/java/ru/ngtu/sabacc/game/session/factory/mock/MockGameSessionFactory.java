@@ -18,7 +18,7 @@ public class MockGameSessionFactory implements IGameSessionFactory {
     }
 
     @Override
-    public IGameSession createSession(IGameMessageExchanger messageExchanger, Long sessionId) {
+    public IGameSession createSession(IGameMessageExchanger messageExchanger, Long sessionId, Long playerFirstId, Long playerSecondId) {
         return new MockGameSession(sessionId);
     }
 }
