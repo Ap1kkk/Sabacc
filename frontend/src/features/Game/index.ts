@@ -1,1 +1,2 @@
-export { Game } from './ui/Game.lazy';
+
+export { Game } from './ui/Game/Game';

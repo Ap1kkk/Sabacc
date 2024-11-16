@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { Client } from '@stomp/stompjs';
 import SockJS from 'sockjs-client';
 
-export const useWebSocket = (playerId: number | undefined, sessionId: number | undefined) => {
+export const useWebSocketGame = (playerId: number | undefined, sessionId: number | undefined) => {
   const [client, setClient] = useState<Client | null>(null);
 
   useEffect(() => {

@@ -1,115 +1,151 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import { selectCurrentUser } from '@/features/Auth/model/selectors/authSelector';
-import axios from 'axios';
 import Game from '@/features/Game/ui/Game/Game';
 import { classNames } from '@/shared/lib/classNames/classNames';
 import cls from './GamePage.module.scss';
-import { useWebSocket } from '@/shared/lib/hooks/useWebSocketGame';
+import { useWebSocketGame } from '@/shared/lib/hooks/useWebSocketGame';
+import { useSetupRoom } from '@/shared/lib/hooks/useSetupRoom';
+import axios from 'axios';
+
+interface RoomState {
+
+}
+
+enum GameStatus {
+  // Показываю игру
+  STARTED = 'STARTED',
+  PLAYER_RECONNECTED = 'PLAYER_RECONNECTED',
+  ALL_USERS_JOINED = 'ALL_USERS_JOINED',
+  ALL_USERS_CONNECTED = 'ALL_USERS_CONNECTED',
+  IN_PROGRESS = 'IN_PROGRESS',
+
+  // Нет
+  WAITING_SECOND_USER = 'WAITING_SECOND_USER',
+  PLAYER_DISCONNECTED = 'PLAYER_DISCONNECTED',
+  FINISHED = 'FINISHED'
+}
 
 const GamePage = () => {
-  const playerId = useSelector(selectCurrentUser)?.id
-  const [players, setPlayers] = useState<any[]>()
-  const [sessionId, setSessionId] = useState<number>();
-  const [gameState, setGameState] = useState();
-  const client = useWebSocket(playerId, sessionId)
-  const [started, setStarted] = useState<any>()
+  const playerId = useSelector(selectCurrentUser)?.id;
+  const sessionId = playerId && useSetupRoom(playerId);
+  const client = useWebSocketGame(playerId, sessionId);
 
-  useEffect(() => {
-    const leaveAllRooms = async () => {
-      localStorage.removeItem('roomId');
-      try {
-        await axios.post(`${__API__}/api/v1/room/leave/all?userId=${playerId}`);
-      } catch (error) {
-        console.error('Ошибка при выходе из комнат:', error);
-      }
-    };
+  const [roomState, setRoomState] = useState<any>()
+  const [gameState, setGameState] = useState<any>()
 
-
-    const setupRoomAndWebSocket = async () => {
-      let roomId = localStorage.getItem('roomId');
-
-      if (roomId) {
-        const data = (await axios.get(`${__API__}/api/v1/room/${roomId}`)).data;
-        if (data.status !== 'FINISHED' ?? (data.playerFirst.id === playerId || data.playerSecond.id === playerId)) {
-          setSessionId(+roomId)
-        } else {
-          leaveAllRooms();
-          roomId = null;
-        }
-      }
-
-      if (!roomId) {
-        const availableRoomsResponse = await axios.get(`${__API__}/api/v1/room/available-for-join?userId=${playerId}`);
-        const availableRooms = availableRoomsResponse.data;
-
-        if (availableRooms.length > 0) {
-          roomId = availableRooms[0].id;
-          await axios.post(`${__API__}/api/v1/room/${roomId}/join?userId=${playerId}`);
-          setStarted('STARTED')
-        } else {
-          const roomResponse = await axios.post(`${__API__}/api/v1/room/create?userId=${playerId}`);
-          roomId = roomResponse.data.id;
-        }
-      }
-
-      if (roomId) {
-        localStorage.setItem('roomId', roomId);
-        setSessionId(+roomId);
-      }
-    };
-
-    if (playerId) {
-      setupRoomAndWebSocket();
-    }
-  }, [playerId]);
 
   const fetchGameState = async () => {
     if (!sessionId) return;
-    try {
-      const gameStateResponse = await axios.get(`${__API__}/api/v1/room/game/current-state?sessionId=${sessionId}`);
-      const data = JSON.parse(gameStateResponse.data ?? '{}')
-      if (data.status && data.status === 'STARTED') {
-        setPlayers([data.details.playerFirst, data.details.playerSecond]);
-      }
-      console.log(players)
-    } catch (error) {
-      console.error('Ошибка при получении состояния игры:', error);
-    }
+    const data = (await axios.get(`${__API__}/api/v1/room/game/current-state?sessionId=${sessionId}`)).data;
+    setGameState(data);
+    //   {
+    //     "currentPlayerId": 1,
+    //     "round": 1,
+    //     "bloodDiscard": null,
+    //     "sandDiscard": null,
+    //     "players": [
+    //         {
+    //             "tokens": [
+    //                 "NO_TAX",
+    //                 "TAKE_TWO_CHIPS",
+    //                 "OTHER_PLAYERS_PAY_ONE"
+    //             ],
+    //             "remainChips": 4,
+    //             "spentChips": 0,
+    //             "bloodCards": [
+    //                 {
+    //                     "value": 6,
+    //                     "cardValueType": "VALUE_CARD"
+    //                 }
+    //             ],
+    //             "sandCards": [
+    //                 {
+    //                     "cardValueType": "IMPOSTER"
+    //                 }
+    //             ],
+    //             "handRating": null
+    //         },
+    //         {
+    //             "tokens": [
+    //                 "NO_TAX",
+    //                 "TAKE_TWO_CHIPS",
+    //                 "OTHER_PLAYERS_PAY_ONE"
+    //             ],
+    //             "remainChips": 4,
+    //             "spentChips": 0,
+    //             "bloodCards": [
+    //                 {
+    //                     "value": 1,
+    //                     "cardValueType": "VALUE_CARD"
+    //                 }
+    //             ],
+    //             "sandCards": [
+    //                 {
+    //                     "value": 6,
+    //                     "cardValueType": "VALUE_CARD"
+    //                 }
+    //             ],
+    //             "handRating": null
+    //         }
+    //     ]
+    // }
   };
 
-  //const client = useWebSocket(playerId, sessionId)
+  const fetchRoomState = async () => {
+    if (!sessionId) return;
+    const data = (await axios.get(`${__API__}/api/v1/room/${sessionId}`)).data;
+    setRoomState(data)
+  }
 
   useEffect(() => {
     if (client && sessionId) {
       const handleConnect = () => {
+        fetchRoomState();
+        fetchGameState();
+
         client.subscribe(`/queue/session/${sessionId}/game-progress`, (message) => {
-          console.log('Получено сообщение из WebSocket /game-progress:', JSON.parse(message.body));
-          setStarted(JSON.parse(message.body).status)
-          //setOpponent(JSON.parse(message.body).sessionRoom.playerSecond)
-          //fetchGameState();
+          fetchGameState();
+          fetchRoomState();
         });
       };
 
       client.onConnect = handleConnect;
     }
-  }, [client, sessionId, fetchGameState]);
+  }, [client, sessionId]);
 
-  const sendTurn = useCallback((turnType, details = {}) => {
-    if (!client || !sessionId) return;
+  const gameInProcess = (status: GameStatus): boolean => {
+    console.log(!(
+      status !== GameStatus.WAITING_SECOND_USER &&
+      status !== GameStatus.PLAYER_DISCONNECTED &&
+      status !== GameStatus.FINISHED
+    ));
+    return (
+      status !== GameStatus.WAITING_SECOND_USER &&
+      status !== GameStatus.PLAYER_DISCONNECTED &&
+      status !== GameStatus.FINISHED
+    );
+  };
 
-    client.publish({
-      destination: `/app/game/${sessionId}/turn`,
-      body: JSON.stringify({ playerId, turnType, details }),
-    });
-  }, [client, sessionId, playerId]);
+  useEffect(() => {
+    console.log('STATE ROOM:')
+    console.log(roomState)
+    console.log('STATE GAME:')
+    console.log(gameState)
+  }, [roomState, gameState])
+
+  if (!gameState || !roomState) return (
+    <div className={classNames(cls.game, {}, [])}>
+      <div>нет состояния</div>
+    </div>
+  )
 
   return (
     <div className={classNames(cls.game, {}, [])}>
-      {(started !== 'STARTED' && started !== 'PLAYER_RECONNECTED') ? (
+      {(!gameInProcess(roomState.status)) ? (
         <div className={classNames(cls.loader, {}, [])}>Ожидание соперника...</div>
       ) : (
-        <Game sendTurn={sendTurn} gameState={gameState} players={players} />
+        <Game client={client} gameState={gameState} roomState={roomState} />
       )}
     </div>
   );
