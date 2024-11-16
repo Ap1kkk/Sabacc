@@ -22,8 +22,8 @@ class GameSession(
 ) : IGameSession {
 
     private val players: MutableMap<Long, Player> = mutableMapOf(
-        playerFirstId to Player(),
-        playerSecondId to Player()
+        playerFirstId to Player(playerFirstId),
+        playerSecondId to Player(playerSecondId)
     )
     private var playersIter = players.keys.iterator()
     private var currentPlayerId: Long = playersIter.next()

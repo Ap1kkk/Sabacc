@@ -4,6 +4,7 @@ import ru.ngtu.sabacc.gamecore.card.Card
 import ru.ngtu.sabacc.gamecore.token.Token
 
 data class Player(
+    val playerId: Long,
     val tokens: MutableList<Token> = mutableListOf(
         Token.NO_TAX,
         Token.TAKE_TWO_CHIPS,
