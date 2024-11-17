@@ -425,6 +425,11 @@ class GameSession(
 
         dice = null
         gameMessageExchanger.sendAcceptedTurn(turnDTO, this)
+
+        CompletableFuture.runAsync {
+            TimeUnit.SECONDS.sleep(1)
+            processImposterCard()
+        }
     }
 
     private fun roundResults() {
