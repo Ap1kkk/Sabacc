@@ -37,3 +37,4 @@ out/
 /nbdist/
 /.nb-gradle/
 
+/amplicode.xml

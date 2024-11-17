@@ -9,6 +9,11 @@ RUN npm run build
 FROM node:lts-alpine3.20
 
 WORKDIR /app
-ENV PROJECT_NAME=sabacc
-COPY --from=build /app/src/dist/$PROJECT_NAME ./
+RUN ls
+COPY --from=build /app/src/dist ./
 CMD node server/server.mjs
+
+FROM nginx:stable-alpine3.19
+
+COPY --from=build /app/src/dist /usr/share/nginx/html
+LABEL org.opencontainers.image.source=https://github.com/Ap1kkk/Sabacc

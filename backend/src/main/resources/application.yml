@@ -32,7 +32,6 @@ spring:
     validate-migration-naming: false
     out-of-order: true
 
-
 user:
   expiration-in-hours: 24
 
@@ -41,6 +40,7 @@ security:
     allowed-origin: "${server.protocol}://${server.host}:3000"
 
 websocket:
+  logging: true
   stomp:
     allowed-origin: "${server.protocol}://${server.host}:3000"
   game:

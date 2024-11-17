@@ -1,0 +1,9 @@
+security:
+  cors:
+    allowed-origin: "${server.protocol}://${server.host}"
+
+websocket:
+  stomp:
+    allowed-origin: "${server.protocol}://${server.host}"
+  game:
+    allowed-origin: "${server.protocol}://${server.host}"

@@ -16,11 +16,11 @@ x-db-password:
   &db-password postgres
 
 x-profiles:
-  &profiles dev
+  &profiles prod
 
 services:
   backend:
-    image: ghcr.io/ap1kkk/sabacc_backend
+    image: ghcr.io/ap1kkk/sabacc/backend:latest
     build:
       context: backend
       dockerfile: Dockerfile
@@ -55,23 +55,15 @@ services:
       POSTGRES_DB: *project-name
     ports:
       - "5432:5432"
-#    volumes:
-#      - ./postgres-data:/var/lib/postgresql/data
+    volumes:
+      - ./postgres-data:/var/lib/postgresql/data
 
   frontend:
+    image: ghcr.io/ap1kkk/sabacc/frontend:latest
     build:
       context: frontend
       dockerfile: Dockerfile
     container_name: sabacc_frontend
-    ports:
-      - "3000:3000"
-
-  nginx:
-    image: nginx:stable-alpine3.19
-    container_name: sabacc_nginx
-    depends_on:
-      - backend
-      - frontend
     ports:
       - "80:80"
     volumes:

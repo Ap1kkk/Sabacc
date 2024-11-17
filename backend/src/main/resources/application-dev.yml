@@ -7,13 +7,5 @@ spring:
     database:
       host: localhost
 
-#security:
-#  cors:
-#    allowed-origin: "http://localhost:3000"
-
 websocket:
-#  stomp:
-#    allowed-origin: "http://localhost:3000"
-#  game:
-#    allowed-origin: "http://localhost:3000"
   logging: true
