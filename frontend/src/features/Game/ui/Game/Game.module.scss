@@ -1,43 +1,12 @@
 
 .table {
-  width: 100%;
+  width: 1200px;
   height: 800px;
   background-color: #000c;
   border-radius: 40px;
   display: flex;
   align-items: center;
   justify-content: center;
+  gap: 100px;
 }
 
-.nickname {
-  width: fit-content;
-  background: #000c;
-  padding: 6px 50px;
-  font: var(--font-m);
-}
-
-.header {
-  width: 100%;
-  padding: 0 40px;
-  display: flex;
-  gap: 10px;
-  justify-content: start;
-
-  .nickname {
-    padding-top: 16px;
-    border-radius: 20px 20px 0 0;
-  }
-}
-
-.footer {
-  width: 100%;
-  padding: 0 40px;
-  display: flex;
-  gap: 10px;
-  justify-content: end;
-
-  .nickname {
-    padding-bottom: 16px;
-    border-radius: 0 0 20px 20px;
-  }
-}

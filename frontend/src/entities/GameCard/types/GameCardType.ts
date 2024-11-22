@@ -1,4 +1,4 @@
-export enum CardTypes {
+export enum GameCardType {
   BLOOD = 'BLOOD',
   SAND = 'SAND'
 } 

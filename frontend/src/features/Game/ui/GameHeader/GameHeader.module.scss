@@ -1,0 +1,23 @@
+.header {
+  width: 100%;
+  padding: 0 40px;
+  display: flex;
+  gap: 10px;
+  justify-content: start;
+}
+
+.nickname {
+  width: fit-content;
+  background: #000c;
+  padding: 20px;
+  font: var(--font-m);
+  border-radius: 20px 20px 0 0;
+}
+
+.controls {
+  transform: rotate(180deg)
+}
+
+.currentUserTurn {
+  border: 2px solid white;
+}

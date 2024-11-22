@@ -1,63 +1,68 @@
-
-import { memo, useCallback, useEffect, useState } from 'react';
-import { classNames } from '@/shared/lib/classNames/classNames';
-import cls from './Game.module.scss'
-import { User } from '@/features/Auth/model/types/auth';
+import { memo, useCallback, useState } from 'react';
 import { useSelector } from 'react-redux';
+import { Client, Message } from '@stomp/stompjs';
+import { classNames } from '@/shared/lib/classNames/classNames';
+import { useWebSocketSubscription } from '@/shared/lib/hooks/useWebSocketSubscription';
 import { selectCurrentUser } from '@/features/Auth';
-import axios from 'axios';
+import { GameHeader } from '../GameHeader/GameHeader';
+import { GameFooter } from '../GameFooter/GameFooter';
+import { GameState } from '../../model/types/game';
+import cls from './Game.module.scss';
+import { useOpponent } from '@/shared/lib/hooks/useOpponent';
+import { RoomState } from '@/entities/Room/types/room';
+import { GameCard, GameCardType } from '@/entities/GameCard';
 
-export const Game = memo(({ client, gameState, roomState }: any) => {
+interface GameProps {
+  client: Client;
+  gameState: GameState;
+  roomState: RoomState;
+}
+
+export const Game = memo(({ client, gameState, roomState }: GameProps) => {
   const user = useSelector(selectCurrentUser);
-  const [opponent, setOpponent] = useState<any>();
+  const opponent = useOpponent(user?.id, roomState);
 
-  const leaveAllRooms = async () => {
-    if (user) await axios.post(`${__API__}/api/v1/room/leave/all?userId=${user.id}`);
-  }
-  useEffect(() => {
-    if (!user || !roomState) return;
-    const newOpponent = user.id == roomState.playerFirst.id ? roomState.playerSecond : roomState.playerFirst;
-    setOpponent(newOpponent)
-
-    return () => {
-    //  leaveAllRooms();
-    }
-  }, [roomState])
+  useWebSocketSubscription(client, `/queue/session/${roomState.id}/accepted-turns`, (message: Message) => {
+    const data = JSON.parse(message.body);
+    console.log(data)
+  });
 
   const sendTurn = useCallback(
     (turnType: string, details: object = {}) => {
       if (client && user) {
         client.publish({
-          destination: `/input/game/${roomState.id}/turn`,
-          body: JSON.stringify({ playerId: user.id, turnType, ...details }),
+          destination: `/app/input/session/${roomState.id}/turn`,
+          body: JSON.stringify({
+            sessionId: roomState.id,
+            playerId: user.id,
+            turnType,
+            ...details,
+          }),
         });
       }
     },
     [client, user, roomState]
   );
 
-  // if (!user || !opponent) return <div></div>
-
   return (
-    <>
-      <div className={classNames(cls.header, {}, [])}>
-        <h5 className={classNames(cls.nickname, {}, [])}>{opponent?.username || 'Opponent'}</h5>
+    <div className={classNames(cls.gameContainer, {}, [])}>
+      <GameHeader opponent={opponent} isCurentTurn={opponent?.id === gameState.currentPlayerId} gameState={gameState} />
+      <div className={cls.table}>
+
+        {gameState.bloodDiscard ?
+          <GameCard type={GameCardType.BLOOD} value={gameState.bloodDiscard.value} /> :
+          <div></div>
+        }
+        <GameCard type={GameCardType.BLOOD} isFlipped isMultiple />
+        <GameCard type={GameCardType.SAND} isFlipped isMultiple />
+        
+        {gameState.sandDiscard ?
+          <GameCard type={GameCardType.BLOOD} value={gameState.sandDiscard.value} /> :
+          <div></div>
+        }
       </div>
-
-      {/*   <div className={classNames(cls.table, {}, [])}>
-        <pre>{JSON.stringify(gameState, null, 2)}</pre>
-
-        <button onClick={() => sendTurn('PASS')}>Спасовать</button>
-        <button onClick={() => sendTurn('GET_SAND')}>Взять песок</button>
-        <button onClick={() => sendTurn('DISCARD_SAND', { index: 0 })}>Сбросить песок</button>
-        <button onClick={() => sendTurn('GET_BLOOD')}>Взять кровь</button>
-        <button onClick={() => sendTurn('DISCARD_BLOOD', { index: 0 })}>Сбросить кровь</button>
-      </div> */}
-
-      <div className={classNames(cls.footer, {}, [])}>
-        <h5 className={classNames(cls.nickname, {}, [])}>{user?.username || 'Me'}</h5>
-      </div>
-    </>
+      <GameFooter user={user!} isCurentTurn={user?.id === gameState.currentPlayerId} />
+    </div>
   );
 });
 

@@ -1,16 +1,17 @@
 import { memo } from 'react';
+import { classNames } from '@/shared/lib/classNames/classNames';
 import cardBlood from '@/shared/assets/images/card_blood.png';
 import cardBloodBack from '@/shared/assets/images/card_blood_back.png';
 import cardSand from '@/shared/assets/images/card_sand.png';
 import cardSandBack from '@/shared/assets/images/card_sand_back.png';
-import { CardTypes } from '../../model/types/card';
+import { GameCardType } from '../types/GameCardType';
 import cls from './GameCard.module.scss'
-import { classNames } from '@/shared/lib/classNames/classNames';
 
 export interface GameCardProps {
-  type: CardTypes;
-  value: number;
+  type: GameCardType;
+  value?: number | 'IMPOSTER';
   isFlipped?: boolean;
+  isMultiple?: boolean;
 }
 
 export const GameCard = memo((props: GameCardProps) => {
@@ -18,19 +19,20 @@ export const GameCard = memo((props: GameCardProps) => {
     type,
     value,
     isFlipped = false,
+    isMultiple = false,
   } = props;
 
   // Выбираем изображение карты в зависимости от типа и переворота
   const cardImage = isFlipped
-    ? (type === CardTypes.BLOOD ? cardBloodBack : cardSandBack)
-    : (type === CardTypes.BLOOD ? cardBlood : cardSand);
+    ? (type === GameCardType.BLOOD ? cardBloodBack : cardSandBack)
+    : (type === GameCardType.BLOOD ? cardBlood : cardSand);
 
   if (isFlipped) {
     return (
       <div className={cls.cardContainer}>
         <img src={cardImage} className={classNames(cls.card, {}, [cls.cardBack])} alt="Card back" />
-        <img src={cardImage} className={classNames(cls.card, {}, [cls.cardBack])} alt="Card back" />
-        <img src={cardImage} className={classNames(cls.card, {}, [cls.cardBack])} alt="Card back" />
+        {isMultiple && <img src={cardImage} className={classNames(cls.card, {}, [cls.cardBack])} alt="Card back" />}
+        {isMultiple && <img src={cardImage} className={classNames(cls.card, {}, [cls.cardBack])} alt="Card back" />}
       </div>
     )
   }

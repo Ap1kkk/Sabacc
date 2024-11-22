@@ -1,0 +1,19 @@
+.footer {
+  width: 100%;
+  padding: 0 40px;
+  display: flex;
+  gap: 10px;
+  justify-content: end;
+}
+
+.nickname {
+  width: fit-content;
+  background: #000c;
+  padding: 20px;
+  font: var(--font-m);
+  border-radius: 0 0 20px 20px;
+}
+
+.currentUserTurn {
+  border: 2px solid white;
+}

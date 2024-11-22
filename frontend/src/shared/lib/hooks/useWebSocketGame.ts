@@ -13,6 +13,9 @@ export const useWebSocketGame = (playerId: number | undefined, sessionId: number
     const stompClient = new Client({
       webSocketFactory: () => socket,
       onStompError: (error) => console.error(`Ошибка WebSocket: ${error}`),
+      onConnect: () => {
+        console.log('WebSocket соединение установлено');
+      },
     });
 
     stompClient.activate();
