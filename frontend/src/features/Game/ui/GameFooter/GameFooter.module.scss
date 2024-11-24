@@ -44,3 +44,28 @@
   gap: 20px;
   transform: translate(-50%, -50%);
 }
+
+.myBank {
+  position: absolute;
+  bottom: calc(100% + 20px);
+  left: 40px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background-color: #1b232b;
+  height: fit-content;
+  padding: 10px;
+  border-radius: 10px;
+
+  span {
+    font-weight: 300;
+    color: #dbd79e;
+    font-size: 30px;
+  }
+
+  img {
+    width: 40px;
+    height: 40px;
+    object-fit: contain;
+  }
+}

@@ -1,0 +1,47 @@
+.GameBank {
+  background-color: #753333;
+  padding: 10px 10px 30px 10px;
+  border-radius: 20px;
+  gap: 30px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  h2 {
+    color: #dbd79e;
+  }
+}
+
+.GameBankContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 10px 40px 10px 20px;
+  border-radius: 10px;
+  background-color: #4f2424;
+}
+
+.credit {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  span {
+    font-weight: 300;
+    color: #dbd79e;
+    font-size: 30px;
+  }
+
+}
+
+.imgContainer {
+  display: flex;
+  flex-direction: row;
+
+  img {
+    height: 40px;
+    width: 40px;
+    object-fit: contain;
+    margin-right: -25px
+  }
+}

@@ -10,6 +10,7 @@ import { AppLink } from '@/shared/ui';
 import { getRouteRools } from '@/shared/const/router';
 import { GameState, TurnType } from '../../model/types/game';
 import { GameCard, GameCardType } from '@/entities/GameCard';
+import CreditImg from '@/shared/assets/images/credit.png'
 
 interface GameFooterProps {
   user: User;
@@ -34,8 +35,13 @@ export const GameFooter = memo((props: GameFooterProps) => {
       </div>
 
 
+      <div className={cls.myBank}>
+        <span>Остаток: {gameState.players[i].remainChips} </span>
+        <img src={CreditImg} alt="Credit" />
+      </div>
+
       <div className={cls.controls}>
-        <GameTokens userId={user?.id} tokens={gameState.players[i].tokens} isClickable />
+        <GameTokens userId={user?.id} tokens={gameState.players[i].tokens} isClickable sendTurn={sendTurn}/>
       </div>
 
       <button className={cls.button}><img src={GiveUpmg} alt="" /></button>
