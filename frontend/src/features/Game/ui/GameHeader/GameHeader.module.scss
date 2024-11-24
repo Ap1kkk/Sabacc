@@ -4,20 +4,39 @@
   display: flex;
   gap: 10px;
   justify-content: start;
+  position: relative;
+  z-index: 2;
 }
 
 .nickname {
-  width: fit-content;
+  margin-right: auto;
+  height: fit-content;
+  width: 250px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-align: center;
   background: #000c;
-  padding: 20px;
+  padding: 30px;
   font: var(--font-m);
   border-radius: 20px 20px 0 0;
 }
 
 .controls {
-  transform: rotate(180deg)
+  position: absolute;
+  top: 100%;
+  transform: rotate(180deg);
 }
 
 .currentUserTurn {
   border: 2px solid white;
+}
+
+.myCards {
+  position: absolute;
+  top: 80%;
+  left: 50%;
+  display: flex;
+  gap: 20px;
+  transform: translate(-50%, -50%);
 }

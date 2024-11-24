@@ -1,4 +1,3 @@
-
 .table {
   width: 1200px;
   height: 800px;
@@ -8,5 +7,15 @@
   align-items: center;
   justify-content: center;
   gap: 100px;
+  position: relative;
 }
 
+.discardBlood {
+  position: absolute;
+  right: 75%;
+}
+
+.discardSand {
+  position: absolute;
+  left: 75%;
+}

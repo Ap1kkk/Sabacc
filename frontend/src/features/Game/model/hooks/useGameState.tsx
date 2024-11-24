@@ -22,6 +22,7 @@ export const useGameState = () => {
         await axios.get(`${__API__}/api/v1/room/game/current-state?sessionId=${sessionId}`)
       ).data;
       setGameState(data);
+      return data;
     } catch (err) {
       setTimeout(() => fetchGameState(), 500);
     }
@@ -39,6 +40,10 @@ export const useGameState = () => {
         fetchRoomState();
         fetchGameState();
         client.subscribe(`/queue/session/${sessionId}/game-progress`, (message) => {
+          fetchGameState();
+          fetchRoomState();
+        });
+        client.subscribe(`/queue/session/${sessionId}/accepted-turns`, (message) => {
           fetchGameState();
           fetchRoomState();
         });
@@ -64,5 +69,6 @@ export const useGameState = () => {
     roomState,
     isLoading,
     isGameInProgress: isGameInProgress(),
+    fetchGameState,
   };
 };

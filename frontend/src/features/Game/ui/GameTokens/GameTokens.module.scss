@@ -1,0 +1,20 @@
+.controlsContainer {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+}
+
+.cardButton {
+  background: none;
+  border: none;
+  filter: contrast(2);
+}
+
+.clickable {
+  cursor: pointer;
+  transform: all .2s ease-in-out;
+  
+  &:hover {
+    opacity: 0.8;
+  }
+}

@@ -4,16 +4,43 @@
   display: flex;
   gap: 10px;
   justify-content: end;
+  position: relative;
 }
 
 .nickname {
-  width: fit-content;
+  margin-left: auto;
+  height: fit-content;
+  width: 250px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-align: center;
   background: #000c;
-  padding: 20px;
+  padding: 30px;
   font: var(--font-m);
   border-radius: 0 0 20px 20px;
 }
 
+.controls {
+  position: absolute;
+  bottom: 100%;
+}
+
 .currentUserTurn {
   border: 2px solid white;
+}
+
+.button {
+  background: none;
+  border: none;
+  filter: brightness(0.7) contrast(2) grayscale(.85);
+}
+
+.myCards {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  display: flex;
+  gap: 20px;
+  transform: translate(-50%, -50%);
 }

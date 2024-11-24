@@ -8,7 +8,11 @@ export enum GameStatus {
   PLAYER_DISCONNECTED = 'PLAYER_DISCONNECTED',
   FINISHED = 'FINISHED',
 }
-
+export enum TokensTypes {
+  NO_TAX = "NO_TAX",
+  TAKE_TWO_CHIPS = "TAKE_TWO_CHIPS",
+  OTHER_PLAYERS_PAY_ONE = "OTHER_PLAYERS_PAY_ONE"
+}
 export interface GameState {
   currentPlayerId: number;
   round: number;
@@ -19,7 +23,7 @@ export interface GameState {
 
 export interface Player {
   playerId: number;
-  tokens: string[];
+  tokens: TokensTypes[];
   remainChips: number;
   spentChips: number;
   bloodCards: Card[];
@@ -28,12 +32,21 @@ export interface Player {
 }
 
 export interface Card {
-  cardValueType: string;
+  cardValueType: "VALUE_CARD" | "SYLOP" | "IMPOSTER";
   value?: number;
 }
 
 export interface HandRating {
   first: number;
   second: number;
+}
+
+export enum TurnType {
+  DISCARD_SAND = "DISCARD_SAND",
+  DISCARD_BLOOD = "DISCARD_BLOOD",
+  GET_SAND = "GET_SAND",
+  GET_BLOOD = "GET_BLOOD",
+  GET_SAND_DISCARD = "GET_SAND_DISCARD",
+  GET_BLOOD_DISCARD = "GET_BLOOD_DISCARD"
 }
 
