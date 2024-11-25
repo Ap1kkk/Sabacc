@@ -16,7 +16,7 @@
   text-overflow: ellipsis;
   text-align: center;
   background: #000c;
-  padding: 30px;
+  padding: 10px 20px;
   font: var(--font-m);
   border-radius: 0 0 20px 20px;
 }
@@ -26,8 +26,18 @@
   bottom: 100%;
 }
 
+@keyframes blink {
+  0%, 100% {
+    background-color: rgba(0, 179, 255, 0.8);
+  }
+  50% {
+    background-color: rgba(0, 0, 0, 0.8);
+  }
+}
+
 .currentUserTurn {
-  border: 2px solid white;
+  font-weight: bold;
+  animation: blink 1s ease-in-out infinite;
 }
 
 .button {

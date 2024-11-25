@@ -44,7 +44,6 @@ export const GameCard = memo((props: GameCardProps) => {
     )
   }
 
-  console.log(card, type)
   if (card?.cardValueType === 'IMPOSTER') {
     cardImage = type === GameCardType.BLOOD ? cardBloodImposter : cardSandImposter
   } else if (card?.cardValueType === 'SYLOP') {

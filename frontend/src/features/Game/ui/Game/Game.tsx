@@ -14,29 +14,33 @@ import { GameCard, GameCardType } from '@/entities/GameCard';
 import { i } from 'node_modules/vite/dist/node/types.d-aGj9QkWt';
 import { GameCardModal } from '../GameCardModal/GameCardModal';
 import { GameBank } from '../GameBank/GameBank';
+import { GameDiceModal } from '../GameDiceModal/GameDiceModal';
+import { Modal } from '@/shared/ui';
+import { GameRoundResultModal } from '../GameRoundResultModal/GameRoundResultModal';
+import { GameResultModal } from '../GameResultModal/GameResultModal';
+import { useNavigate } from 'react-router-dom';
+import { getRouteMain } from '@/shared/const/router';
 
 interface GameProps {
   client: Client;
   gameState: GameState;
   roomState: RoomState;
+  diceDetails: { first: number; second: number } | null;
+  handleDiceSelection: (index: number) => void;
+  winnerId: number | null; // Новое свойство
+  roundResult: any | null; // Новое свойство
 }
 
-export const Game = memo(({ client, gameState, roomState }: GameProps) => {
+export const Game = memo(({ client, gameState, roomState, diceDetails, handleDiceSelection, winnerId, roundResult }: GameProps) => {
   const user = useSelector(selectCurrentUser);
   const opponent = useOpponent(user?.id, roomState);
   const [modalCards, setModalCads] = useState<{ cards: Card[], type: GameCardType } | null>(null)
+  const [showRoundModal, setShowRoundModal] = useState(false);
+  const [showGameModal, setShowGameModal] = useState(false);
+  const navigate = useNavigate()
 
   const sendTurn = useCallback((turnType: string, details: object = {}) => {
     if (client && user) {
-      console.log({
-        sessionId: roomState.id,
-        playerId: user.id,
-        turnType,
-        details: {
-          ...details
-        }
-      })
-      
       client.publish({
         destination: `/app/input/session/${roomState.id}/turn`,
         body: JSON.stringify({
@@ -78,9 +82,37 @@ export const Game = memo(({ client, gameState, roomState }: GameProps) => {
     }
   }, [gameState])
 
+
+  useEffect(() => {
+    if (roundResult) {
+      setShowRoundModal(true); // Показ модального окна для результатов раунда
+    }
+  }, [roundResult]);
+
+  useEffect(() => {
+    if (winnerId) {
+      setShowGameModal(true); // Показ модального окна для результатов игры
+    }
+  }, [winnerId]);
+
+
   return (
     <>
+      {(showRoundModal && !showGameModal) && (
+        <GameRoundResultModal roundResult={roundResult} onClose={() => setShowRoundModal(false)} />
+      )}
+      {showGameModal && (
+        <GameResultModal winnerId={winnerId!} onClose={() => navigate(getRouteMain())} />
+      )}
+
       {modalCards && <GameCardModal cards={modalCards.cards} sendTurn={sendTurn} type={modalCards.type} />}
+      {diceDetails && (
+        <GameDiceModal
+          first={diceDetails.first}
+          second={diceDetails.second}
+          onSelect={handleDiceSelection}
+        />
+      )}
 
       <div className={classNames(cls.ç, {}, [])}>
         <GameHeader opponent={opponent} isCurentTurn={opponent?.id === gameState.currentPlayerId} gameState={gameState} />

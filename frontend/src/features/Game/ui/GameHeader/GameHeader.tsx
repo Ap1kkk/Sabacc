@@ -5,6 +5,7 @@ import { User } from '@/features/Auth/model/types/auth';
 import { GameState } from '../../model/types/game';
 import { GameTokens } from '../GameTokens/GameTokens';
 import { GameCard, GameCardType } from '@/entities/GameCard';
+import CreditImg from '@/shared/assets/images/credit.png'
 
 interface GameHeaderProps {
   gameState: GameState;
@@ -28,13 +29,18 @@ export const GameHeader = memo((props: GameHeaderProps) => {
       </div>
 
 
+      <div className={cls.myBank}>
+        <span>Остаток: {gameState.players[i].remainChips} </span>
+        <img src={CreditImg} alt="Credit" />
+      </div>
+
       <h5 className={classNames(cls.nickname, mods, [])}>{opponent?.username || 'Opponent'}</h5>
 
       <div className={cls.controls}>
         <GameTokens userId={opponent?.id} tokens={gameState.players[i].tokens} />
       </div>
 
-
+      <div className={cls.roundContainer}>ROUND: {gameState.round}</div>
     </div>
   );
 });

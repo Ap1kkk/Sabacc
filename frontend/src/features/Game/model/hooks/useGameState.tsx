@@ -1,10 +1,10 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { selectCurrentUser } from '@/features/Auth/model/selectors/authSelector';
 import { useWebSocketGame } from '@/shared/lib/hooks/useWebSocketGame';
 import { useSetupRoom } from '@/shared/lib/hooks/useSetupRoom';
 import axios from 'axios';
-import { GameState, GameStatus } from '../types/game';
+import { GameState, GameStatus, TurnType } from '../types/game';
 
 export const useGameState = () => {
   const playerId = useSelector(selectCurrentUser)?.id;
@@ -14,6 +14,9 @@ export const useGameState = () => {
   const [roomState, setRoomState] = useState<any>();
   const [gameState, setGameState] = useState<GameState | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [diceDetails, setDiceDetails] = useState(null);
+  const [winnerId, setWinnerId] = useState()
+  const [roundResult, setRoundResult] = useState()
 
   const fetchGameState = async () => {
     if (!sessionId) return;
@@ -22,7 +25,7 @@ export const useGameState = () => {
         await axios.get(`${__API__}/api/v1/room/game/current-state?sessionId=${sessionId}`)
       ).data;
       setGameState(data);
-      return data;
+      console.log(data);
     } catch (err) {
       setTimeout(() => fetchGameState(), 500);
     }
@@ -34,18 +37,69 @@ export const useGameState = () => {
     setRoomState(data);
   };
 
+  // Отображение модалки кубика только если ход принадлежит текущему игроку
+  const showDiceModal = (details: any) => {
+    setDiceDetails(details);
+  };
+
+  // Обработка выбора кубика
+  const handleDiceSelection = (index: number) => {
+    if (client && playerId) {
+      client.publish({
+        destination: `/app/input/session/${roomState.id}/turn`,
+        body: JSON.stringify({
+          sessionId: roomState.id,
+          playerId: playerId,
+          turnType: TurnType.SELECT_DICE,
+          details: {
+            index,
+          },
+        }),
+      });
+    }
+  };
+
   useEffect(() => {
     if (client && sessionId) {
       const handleConnect = () => {
         fetchRoomState();
         fetchGameState();
+
+        // Подписка на обновление прогресса игры
         client.subscribe(`/queue/session/${sessionId}/game-progress`, (message) => {
           fetchGameState();
           fetchRoomState();
         });
+
+        // Подписка на подтвержденные ходы
         client.subscribe(`/queue/session/${sessionId}/accepted-turns`, (message) => {
+          const data = JSON.parse(message.body);
+
+          // Проверяем, если ход ожидает кубиков и принадлежит текущему игроку
+          if (data.turnType === "AWAITING_DICE" && data.playerId === playerId) {
+            showDiceModal(data.details); // Показ модалки кубиков
+          } else {
+            showDiceModal(null)
+          }
+
           fetchGameState();
           fetchRoomState();
+        });
+
+        client.subscribe(`/queue/session/${sessionId}/errors`, (message) => {
+          console.error(JSON.stringify(message.body));
+        });
+
+        client.subscribe(`/queue/session/${sessionId}/game-results`, (message) => {
+          const data = JSON.parse(message.body);
+          console.log(data)
+          setWinnerId(data.winnerId); // Сохраняем ID победителя
+        });
+  
+        client.subscribe(`/queue/session/${sessionId}/round-results`, (message) => {
+          const data = JSON.parse(message.body);
+          console.log(data)
+          setRoundResult(data); // Сохраняем результаты раунда
         });
       };
 
@@ -54,6 +108,7 @@ export const useGameState = () => {
     }
   }, [client, sessionId]);
 
+  // Проверка, идет ли игра
   const isGameInProgress = () => {
     const status = roomState?.status;
     return (
@@ -70,5 +125,9 @@ export const useGameState = () => {
     isLoading,
     isGameInProgress: isGameInProgress(),
     fetchGameState,
+    diceDetails,
+    handleDiceSelection,
+    winnerId,
+    roundResult
   };
 };
