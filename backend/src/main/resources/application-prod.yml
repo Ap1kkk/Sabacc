@@ -1,3 +1,5 @@
+host: "192.67.204.233"
+
 security:
   cors:
     allowed-origin: "${server.protocol}://${server.host}"
