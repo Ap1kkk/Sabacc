@@ -9,7 +9,7 @@ interface BuildOptions {
 export default ({ mode }: BuildOptions) => {
   const isDev = mode === 'development';
   const port = process.env.VITE_PORT || 3000;
-  const apiUrl = process.env.VITE_API_URL || 'http://localhost:8080';
+  const apiUrl = isDev ? 'http://localhost:8080' : 'http://194.67.204.233';
 
   return defineConfig({
     plugins: [svgr({ include: '**/*.svg', }), react()],
