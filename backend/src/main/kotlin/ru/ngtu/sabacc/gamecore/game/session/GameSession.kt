@@ -298,7 +298,7 @@ class GameSession(
     private fun playToken(turnDTO: TurnDto) {
         val playerId = turnDTO.playerId
         val player = players[playerId]!!
-        val token = turnDTO.details!!["token"] as Token
+        val token = Token.valueOf(turnDTO.details!!["token"] as String)
         if (token !in player.tokens) {
             gameMessageExchanger.sendErrorMessage(
                 GameErrorDto(
