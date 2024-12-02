@@ -209,9 +209,13 @@ public class SessionRoomService {
 
     @EventListener(SessionFinishedEvent.class)
     void onSessionFinished(SessionFinishedEvent event) {
-        SessionRoom sessionRoom = getRoomById(event.sessionId());
-        updateSessionStatus(sessionRoom, SessionRoomStatus.FINISHED);
-        sessionRoomRepository.saveAndFlush(sessionRoom);
+        try {
+            SessionRoom sessionRoom = getRoomById(event.sessionId());
+            updateSessionStatus(sessionRoom, SessionRoomStatus.FINISHED);
+            sessionRoomRepository.saveAndFlush(sessionRoom);
+        } catch (Exception e) {
+            log.error("[SessionRoomService] : Exception raised when handling session finished event: {}", e.getMessage());
+        }
     }
 
     private SessionRoom switchPlayerSocketConnected(Long sessionId, Long playerId, boolean value) {

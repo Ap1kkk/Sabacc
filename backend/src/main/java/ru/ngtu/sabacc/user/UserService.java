@@ -13,6 +13,7 @@ import ru.ngtu.sabacc.system.exception.notfound.UserNotFoundException;
 
 import java.time.Duration;
 import java.time.Instant;
+import java.time.ZonedDateTime;
 import java.util.List;
 
 @Slf4j
@@ -62,8 +63,8 @@ public class UserService {
 
         User userToCreate = User.builder()
                 .username(dto.getUsername())
-                .createdAt(Instant.now())
-                .expireAt(Instant.now()
+                .createdAt(ZonedDateTime.now())
+                .expireAt(ZonedDateTime.now()
                         .plus(Duration.ofHours(userConfigProperties.getExpirationInHours()))
                 )
                 .build();

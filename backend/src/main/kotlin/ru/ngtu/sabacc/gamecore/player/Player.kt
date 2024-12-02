@@ -1,8 +1,10 @@
 package ru.ngtu.sabacc.gamecore.player
 
+import lombok.Data
 import ru.ngtu.sabacc.gamecore.card.Card
 import ru.ngtu.sabacc.gamecore.token.Token
 
+@Data
 data class Player(
     val playerId: Long,
     val tokens: MutableList<Token> = mutableListOf(

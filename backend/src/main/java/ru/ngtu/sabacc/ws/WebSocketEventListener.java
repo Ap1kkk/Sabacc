@@ -20,14 +20,19 @@ public class WebSocketEventListener implements ApplicationListener<SessionDiscon
 
     @Override
     public void onApplicationEvent(SessionDisconnectEvent event) {
-        StompHeaderAccessor headerAccessor = StompHeaderAccessor.wrap(event.getMessage());
-        Long sessionId = (Long) headerAccessor.getSessionAttributes().get("sessionId");
-        Long playerId = (Long) headerAccessor.getSessionAttributes().get("playerId");
+        log.debug("WS: handling session disconnect event: {}", event);
+        try {
+            StompHeaderAccessor headerAccessor = StompHeaderAccessor.wrap(event.getMessage());
+            Long sessionId = (Long) headerAccessor.getSessionAttributes().get("sessionId");
+            Long playerId = (Long) headerAccessor.getSessionAttributes().get("playerId");
 
-        if (sessionId != null && playerId != null) {
-            log.info("WS: Player [{}] disconnected from session [{}]", playerId, sessionId);
-            sessionRoomService.handlePlayerSocketDisconnect(sessionId, playerId);
-            // Логика обработки дисконнекта, используя sessionId и playerId
+            if (sessionId != null && playerId != null) {
+                log.info("WS: Player [{}] disconnected from session [{}]", playerId, sessionId);
+                sessionRoomService.handlePlayerSocketDisconnect(sessionId, playerId);
+                // Логика обработки дисконнекта, используя sessionId и playerId
+            }
+        } catch (Exception e) {
+            log.error("WS: Exception occurred while disconnecting from session: {}", e.getMessage());
         }
     }
 }

@@ -118,8 +118,12 @@ public class GameSessionService {
 
     @EventListener(SessionFinishedEvent.class)
     void onSessionFinished(SessionFinishedEvent event) {
-        Long sessionId = event.sessionId();
-        finishSession(sessionId);
+        try {
+            Long sessionId = event.sessionId();
+            finishSession(sessionId);
+        } catch (Exception e) {
+            log.error("Exception raised when finishing session: {}", e.getMessage());
+        }
     }
 
     private void pauseSession(Long sessionId) {

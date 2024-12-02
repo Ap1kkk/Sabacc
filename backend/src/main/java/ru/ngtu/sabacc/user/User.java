@@ -7,6 +7,7 @@ import org.hibernate.type.SqlTypes;
 import ru.ngtu.sabacc.system.model.BaseEntity;
 
 import java.time.Instant;
+import java.time.ZonedDateTime;
 
 @Entity
 @Table(name = "users")
@@ -23,9 +24,9 @@ public class User extends BaseEntity {
     @Column(name = "created_at")
     @JdbcTypeCode(SqlTypes.TIMESTAMP_WITH_TIMEZONE)
     @Builder.Default
-    private Instant createdAt = Instant.now();
+    private ZonedDateTime createdAt = ZonedDateTime.now();
 
     @Column(name = "expire_at")
     @JdbcTypeCode(SqlTypes.TIMESTAMP_WITH_TIMEZONE)
-    private Instant expireAt;
+    private ZonedDateTime expireAt;
 }

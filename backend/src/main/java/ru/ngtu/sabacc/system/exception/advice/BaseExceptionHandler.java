@@ -1,6 +1,7 @@
 package ru.ngtu.sabacc.system.exception.advice;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import ru.ngtu.sabacc.system.exception.AppException;
 import ru.ngtu.sabacc.system.exception.message.ApplicationErrorCode;
@@ -46,7 +47,10 @@ public class BaseExceptionHandler {
 
     public ResponseEntity<ApplicationErrorMessage> buildResponse(ApplicationErrorMessage errorMessage) {
         logError(errorMessage);
-        return new ResponseEntity<>(errorMessage, errorMessage.getHttpStatus());
+        return ResponseEntity
+                .status(errorMessage.getHttpStatus())
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(errorMessage);
     }
 
 }
