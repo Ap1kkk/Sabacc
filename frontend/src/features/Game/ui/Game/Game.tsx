@@ -29,9 +29,10 @@ interface GameProps {
   handleDiceSelection: (index: number) => void;
   winnerId: number | null; // Новое свойство
   roundResult: any | null; // Новое свойство
+  leaveCurrentRoom: any;
 }
 
-export const Game = memo(({ client, gameState, roomState, diceDetails, handleDiceSelection, winnerId, roundResult }: GameProps) => {
+export const Game = memo(({ client, gameState, roomState, diceDetails, handleDiceSelection, winnerId, roundResult,leaveCurrentRoom }: GameProps) => {
   const user = useSelector(selectCurrentUser);
   const opponent = useOpponent(user?.id, roomState);
   const [modalCards, setModalCads] = useState<{ cards: Card[], type: GameCardType } | null>(null)
@@ -130,7 +131,7 @@ export const Game = memo(({ client, gameState, roomState, diceDetails, handleDic
           <GameBank gameState={gameState} userId={user?.id} className={cls.bank} sendTurn={sendTurn} />
         </div>
 
-        <GameFooter user={user!} isCurentTurn={user?.id === gameState.currentPlayerId} gameState={gameState} sendTurn={sendTurn} />
+        <GameFooter user={user!} isCurentTurn={user?.id === gameState.currentPlayerId} gameState={gameState} sendTurn={sendTurn} leaveCurrentRoom={leaveCurrentRoom}/>
       </div>
     </>
   );

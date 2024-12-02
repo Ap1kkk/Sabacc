@@ -31,6 +31,13 @@ export const useGameState = () => {
     }
   };
 
+  const leaveCurrentRoom = async () => {
+    if (!sessionId) return;
+    await axios.post(`${__API__}/api/v1/room/leave/${sessionId}?userId=${playerId}`);
+    localStorage.removeItem('roomId');
+    setGameState(null)
+  };
+
   const fetchRoomState = async () => {
     if (!sessionId) return;
     const data = (await axios.get(`${__API__}/api/v1/room/${sessionId}`)).data;
@@ -95,7 +102,7 @@ export const useGameState = () => {
           console.log(data)
           setWinnerId(data.winnerId); // Сохраняем ID победителя
         });
-  
+
         client.subscribe(`/queue/session/${sessionId}/round-results`, (message) => {
           const data = JSON.parse(message.body);
           console.log(data)
@@ -128,6 +135,7 @@ export const useGameState = () => {
     diceDetails,
     handleDiceSelection,
     winnerId,
-    roundResult
+    roundResult,
+    leaveCurrentRoom
   };
 };

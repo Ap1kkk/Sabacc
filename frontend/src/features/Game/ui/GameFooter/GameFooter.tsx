@@ -7,25 +7,39 @@ import GiveUpmg from '@/shared/assets/images/give_up.png'
 import { User } from '@/features/Auth/model/types/auth';
 import { GameTokens } from '../GameTokens/GameTokens';
 import { AppLink } from '@/shared/ui';
-import { getRouteRools } from '@/shared/const/router';
-import { GameState, TurnType } from '../../model/types/game';
+import { getRouteMain, getRouteRools } from '@/shared/const/router';
+import { GameState } from '../../model/types/game';
 import { GameCard, GameCardType } from '@/entities/GameCard';
 import CreditImg from '@/shared/assets/images/credit.png'
+import { useNavigate } from 'react-router-dom';
 
 interface GameFooterProps {
   user: User;
   isCurentTurn: boolean;
   gameState: GameState;
   sendTurn: any;
+  leaveCurrentRoom: any;
 }
 
 export const GameFooter = memo((props: GameFooterProps) => {
-  const { user, isCurentTurn, gameState, sendTurn, ...otherProps } = props;
+  const { user, isCurentTurn, gameState, sendTurn, leaveCurrentRoom, ...otherProps } = props;
   const i = gameState?.players[0].playerId == user?.id ? 0 : 1;
+  const navigate = useNavigate()
 
   const mods: Mods = {
     [cls.currentUserTurn]: isCurentTurn
   }
+  const handlePass = () => {
+    if (sendTurn) {
+      sendTurn('PASS');
+    }
+  };
+  const handleLeaveGame = () => {
+    if (leaveCurrentRoom) {
+      leaveCurrentRoom();
+      navigate(getRouteMain())
+    };
+  };
 
   return (
     <div className={classNames(cls.footer, {}, [])}>
@@ -41,12 +55,12 @@ export const GameFooter = memo((props: GameFooterProps) => {
       </div>
 
       <div className={cls.controls}>
-        <GameTokens userId={user?.id} tokens={gameState.players[i].tokens} isClickable sendTurn={sendTurn}/>
+        <GameTokens userId={user?.id} tokens={gameState.players[i].tokens} isClickable sendTurn={sendTurn} />
       </div>
 
-      <button className={cls.button}><img src={GiveUpmg} alt="" /></button>
+      <button className={cls.button} onClick={handleLeaveGame}><img src={GiveUpmg} alt="" /></button>
       <AppLink className={cls.button} to={getRouteRools()}><img src={RoolsImg} alt="" /></AppLink>
-      <button className={cls.button}><img src={PassImg} alt="" /></button>
+      <button className={cls.button} onClick={handlePass}><img src={PassImg} alt="" /></button>
 
       <h5 className={classNames(cls.nickname, mods, [])}>{user?.username || 'Opponent'}</h5>
     </div>
