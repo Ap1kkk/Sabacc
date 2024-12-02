@@ -1,4 +1,5 @@
-host: "192.67.204.233"
+server:
+  host: "103.90.75.122:88"
 
 security:
   cors:
