@@ -1,5 +1,6 @@
 package ru.ngtu.sabacc.gamecore.game.session
 
+import mu.KotlinLogging
 import ru.ngtu.sabacc.game.messaging.IGameMessageExchanger
 import ru.ngtu.sabacc.game.messaging.IGameSession
 import ru.ngtu.sabacc.gamecore.card.Card
@@ -11,8 +12,9 @@ import ru.ngtu.sabacc.gamecore.turn.TurnDto
 import ru.ngtu.sabacc.gamecore.turn.TurnType
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.TimeUnit
-import kotlin.math.max
+import kotlin.math.min
 
+private val logger = KotlinLogging.logger {  }
 
 class GameSession(
     private val sessionId: Long,
@@ -114,10 +116,13 @@ class GameSession(
     }
 
     override fun tryMakeTurn(turnDTO: TurnDto) {
+        logger.debug { "Session $sessionId: Making $turnDTO" }
+
         val playerId = turnDTO.playerId
         val turnType = turnDTO.turnType
 
         if (pause) {
+            logger.debug { "Session $sessionId error: Game on pause" }
             gameMessageExchanger.sendErrorMessage(
                 GameErrorDto(
                     sessionId,
@@ -128,6 +133,7 @@ class GameSession(
             return
         }
         if (playerId != currentPlayerId) {
+            logger.debug { "Session $sessionId error: Player $playerId is making turn. But now it's the Player $currentPlayerId turn" }
             gameMessageExchanger.sendErrorMessage(
                 GameErrorDto(
                     sessionId,
@@ -138,6 +144,7 @@ class GameSession(
             return
         }
         if (turnType !in waitingForMoveType) {
+            logger.debug { "Session $sessionId error: Player $playerId is making wrong move. Awaiting $waitingForMoveType" }
             gameMessageExchanger.sendErrorMessage(
                 GameErrorDto(
                     sessionId,
@@ -167,6 +174,7 @@ class GameSession(
     }
 
     private fun pass(turnDTO: TurnDto) {
+        logger.debug { "Session $sessionId: Player ${turnDTO.playerId} skipped his turn" }
         passCount++
 
         gameMessageExchanger.sendAcceptedTurn(turnDTO, this)
@@ -178,6 +186,7 @@ class GameSession(
         val player = players[playerId]!!
 
         if (!pay(player, cardPrice)) {
+            logger.debug { "Session $sessionId error: Player $playerId can't pay for sand deck" }
             gameMessageExchanger.sendErrorMessage(
                 GameErrorDto(
                     sessionId,
@@ -188,9 +197,10 @@ class GameSession(
             return
         }
 
-        player.sandCards.add(
-            board.sandDeck.removeLast()
-        )
+        val card = board.sandDeck.removeLast()
+        player.sandCards.add(card)
+
+        logger.debug { "Session $sessionId: Player $playerId took a $card from sand deck" }
 
         gameMessageExchanger.sendAcceptedTurn(turnDTO, this)
         waitingForMoveType = listOf(
@@ -203,6 +213,7 @@ class GameSession(
         val player = players[playerId]!!
 
         if (!pay(player, cardPrice)) {
+            logger.debug { "Session $sessionId error: Player $playerId can't pay for blood deck" }
             gameMessageExchanger.sendErrorMessage(
                 GameErrorDto(
                     sessionId,
@@ -213,9 +224,10 @@ class GameSession(
             return
         }
 
-        player.bloodCards.add(
-            board.bloodDeck.removeLast()
-        )
+        val card = board.bloodDeck.removeLast()
+        player.bloodCards.add(card)
+
+        logger.debug { "Session $sessionId: Player $playerId took a $card from blood deck" }
 
         gameMessageExchanger.sendAcceptedTurn(turnDTO, this)
         waitingForMoveType = listOf(
@@ -228,6 +240,7 @@ class GameSession(
         val player = players[playerId]!!
 
         if (!pay(player, cardPrice)) {
+            logger.debug { "Session $sessionId error: Player $playerId can't pay for sand discard" }
             gameMessageExchanger.sendErrorMessage(
                 GameErrorDto(
                     sessionId,
@@ -238,9 +251,10 @@ class GameSession(
             return
         }
 
-        player.sandCards.add(
-            board.sandDiscardDeck.removeLast()
-        )
+        val card = board.sandDiscardDeck.removeLast()
+        player.sandCards.add(card)
+
+        logger.debug { "Session $sessionId: Player $playerId took a $card from sand discard" }
 
         gameMessageExchanger.sendAcceptedTurn(turnDTO, this)
         waitingForMoveType = listOf(
@@ -253,6 +267,7 @@ class GameSession(
         val player = players[playerId]!!
 
         if (!pay(player, cardPrice)) {
+            logger.debug { "Session $sessionId error: Player $playerId can't pay for blood discard" }
             gameMessageExchanger.sendErrorMessage(
                 GameErrorDto(
                     sessionId,
@@ -263,9 +278,10 @@ class GameSession(
             return
         }
 
-        player.bloodCards.add(
-            board.bloodDiscardDeck.removeLast()
-        )
+        val card = board.bloodDiscardDeck.removeLast()
+        player.bloodCards.add(card)
+
+        logger.debug { "Session $sessionId: Player $playerId took a $card from blood discard" }
 
         gameMessageExchanger.sendAcceptedTurn(turnDTO, this)
         waitingForMoveType = listOf(
@@ -280,6 +296,8 @@ class GameSession(
         val card = player.sandCards.removeAt(index)
         board.sandDiscardDeck.add(card)
 
+        logger.debug { "Session $sessionId: Player $playerId threw $card in sand discard" }
+
         gameMessageExchanger.sendAcceptedTurn(turnDTO, this)
         nextState()
     }
@@ -291,6 +309,8 @@ class GameSession(
         val card = player.bloodCards.removeAt(index)
         board.bloodDiscardDeck.add(card)
 
+        logger.debug { "Session $sessionId: Player $playerId threw $card in blood discard" }
+
         gameMessageExchanger.sendAcceptedTurn(turnDTO, this)
         nextState()
     }
@@ -300,6 +320,7 @@ class GameSession(
         val player = players[playerId]!!
         val token = Token.valueOf(turnDTO.details!!["token"] as String)
         if (token !in player.tokens) {
+            logger.debug { "Session $sessionId error: Player $playerId doesn't have $token to play" }
             gameMessageExchanger.sendErrorMessage(
                 GameErrorDto(
                     sessionId,
@@ -315,13 +336,15 @@ class GameSession(
                 player.tokens.remove(Token.NO_TAX)
 
                 cardPrice = 0
+                logger.debug { "Session $sessionId: Player $playerId used $token, now the card price is $cardPrice" }
             }
             Token.TAKE_TWO_CHIPS -> {
                 player.tokens.remove(Token.TAKE_TWO_CHIPS)
 
-                val maxChips = max(player.spentChips, 2)
-                player.remainChips += maxChips
-                player.spentChips -= maxChips
+                val minChips = min(player.spentChips, 2)
+                player.remainChips += minChips
+                player.spentChips -= minChips
+                logger.debug { "Session $sessionId: Player $playerId used $token, $minChips returned from the bank" }
             }
             Token.OTHER_PLAYERS_PAY_ONE -> {
                 player.tokens.remove(Token.OTHER_PLAYERS_PAY_ONE)
@@ -330,7 +353,8 @@ class GameSession(
                     if (opponent == player)
                         continue
 
-                    pay(opponent, 1)
+                    val isPaid = pay(opponent, 1)
+                    logger.debug { "Session $sessionId: Player $playerId used $token, opponent ${if (isPaid) "paid 1" else "can't pay, nothing happened"}" }
                 }
             }
         }
@@ -346,13 +370,17 @@ class GameSession(
     }
 
     private fun nextState() {
+        logger.debug { "Session $sessionId: Player $currentPlayerId has finished his move" }
+
         waitingForMoveType = initWaitingForMoveType()
         cardPrice = 1
 
         if (playersIter.hasNext()) {
             currentPlayerId = playersIter.next()
+            logger.debug { "Session $sessionId: Player $currentPlayerId is the current player" }
         }
         else {
+            logger.debug { "Session $sessionId: Turn $turn is over" }
             nextTurn()
         }
     }
@@ -364,8 +392,10 @@ class GameSession(
         if (turn < 3 && passCount != players.size) {
             turn++
             passCount = 0
+            logger.debug { "Session $sessionId: Starting next turn. Turn $turn" }
         }
         else {
+            logger.debug { "Session $sessionId: Round $round is over, processing Imposter cards" }
             CompletableFuture.runAsync {
                 TimeUnit.SECONDS.sleep(1)
                 processImposterCard()
@@ -379,14 +409,23 @@ class GameSession(
         val sandCard = player.sandCards.last()
 
         when {
-            bloodCard is Card.ImposterCard -> replaceImposterCard(turnDTO, player.bloodCards)
-            sandCard is Card.ImposterCard -> replaceImposterCard(turnDTO, player.sandCards)
+            bloodCard is Card.ImposterCard -> {
+                if (turnDTO == null)
+                    logger.debug { "Session $sessionId: Player $currentPlayerId blood card is Imposter card" }
+                replaceImposterCard(turnDTO, player.bloodCards)
+            }
+            sandCard is Card.ImposterCard -> {
+                if (turnDTO == null)
+                    logger.debug { "Session $sessionId: Player $currentPlayerId sand card is Imposter card" }
+                replaceImposterCard(turnDTO, player.sandCards)
+            }
             else -> {
                 if (playersIter.hasNext()) {
                     currentPlayerId = playersIter.next()
                     processImposterCard()
                 }
                 else {
+                    logger.debug { "Session $sessionId: All Imposter cards has been processed" }
                     roundResults()
                 }
             }
@@ -403,6 +442,9 @@ class GameSession(
             waitingForMoveType = listOf(
                 TurnType.SELECT_DICE
             )
+
+            logger.debug { "Session $sessionId: Player $currentPlayerId need to pick a dice from $dice" }
+
             gameMessageExchanger.sendAcceptedTurn(
                 TurnDto(
                     sessionId,
@@ -418,10 +460,11 @@ class GameSession(
         }
         val index = turnDTO.details!!["index"] as Int
         val value = dice!![index]
-        cards.removeLast()
-        cards.add(
-            Card.ValueCard(value)
-        )
+        val imposterCard = cards.removeLast()
+        val valueCard = Card.ValueCard(value)
+        cards.add(valueCard)
+
+        logger.debug { "Session $sessionId: Player $currentPlayerId chose index $index. $imposterCard is being replaced by $valueCard" }
 
         dice = null
         gameMessageExchanger.sendAcceptedTurn(turnDTO, this)
@@ -433,12 +476,14 @@ class GameSession(
     }
 
     private fun roundResults() {
+        logger.debug { "Session $sessionId: Round $round. Starting counting the results" }
         // Rate players hand
         for (player in players.values) {
             val sandCard = player.sandCards.removeLast()
             val bloodCard = player.bloodCards.removeLast()
 
             player.handRating = rateHand(sandCard, bloodCard)
+            logger.debug { "Session $sessionId: Round $round. Player ${player.playerId} has hand rating of ${player.handRating}" }
         }
 
         val playersSortedByRating = players.values.sortedWith(compareBy(
@@ -452,12 +497,18 @@ class GameSession(
         winner.remainChips += winner.spentChips
         forcePay(winner, winner.handRating!!.first)
 
+        logger.debug { "Session $sessionId: Round $round. Winner is Player ${winner.playerId}. He is paying ${winner.handRating!!.first}" }
+
         val looser = playersSortedByRating.last()
         if (looser.handRating!!.first == 0) {
             forcePay(looser, 1)
+
+            logger.debug { "Session $sessionId: Round $round. Looser is Player ${looser.playerId}. He is paying 1" }
         }
         else {
             forcePay(looser, looser.handRating!!.first)
+
+            logger.debug { "Session $sessionId: Round $round. Looser is Player ${looser.playerId}. He is paying ${looser.handRating!!.first}" }
         }
 
         CompletableFuture.runAsync {
@@ -474,6 +525,8 @@ class GameSession(
 
             // Show the winner
             if (looser.remainChips == 0) {
+                logger.debug { "Session $sessionId: Round $round. Player ${looser.playerId} has been eliminated, session finished" }
+
                 gameMessageExchanger.sendGameFinished(
                     GameFinishDto(sessionId, winnerId), this
                 )
@@ -513,6 +566,8 @@ class GameSession(
         playersIter = players.keys.iterator()
         currentPlayerId = playersIter.next()
         passCount = 0
+
+        logger.debug { "Session $sessionId: Starting next round. Round $round" }
 
         start()
     }
