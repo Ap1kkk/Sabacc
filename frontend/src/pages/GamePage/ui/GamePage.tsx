@@ -14,6 +14,7 @@ const GamePage = () => {
     handleDiceSelection,
     winnerId,
     roundResult,
+    leaveCurrentRoom
   } = useGameState();
 
   if (!client) return <div>Проблема с вебсокетом</div>;
@@ -33,6 +34,7 @@ const GamePage = () => {
           handleDiceSelection={handleDiceSelection}
           winnerId={winnerId!} // Передаем ID победителя
           roundResult={roundResult} // Передаем результаты раунда
+          leaveCurrentRoom={leaveCurrentRoom}
         />
       )}
     </div>
