@@ -31,9 +31,10 @@ interface GameProps {
   winnerId: number | null; // Новое свойство
   roundResult: any | null; // Новое свойство
   leaveCurrentRoom: any;
+  fetchGameState: any;
 }
 
-export const Game = memo(({ client, gameState, roomState, diceDetails, handleDiceSelection, winnerId, roundResult, leaveCurrentRoom }: GameProps) => {
+export const Game = memo(({ client, gameState, roomState, diceDetails, handleDiceSelection, winnerId, roundResult, leaveCurrentRoom, fetchGameState }: GameProps) => {
   const user = useSelector(selectCurrentUser);
   const opponent = useOpponent(user?.id, roomState);
   const [modalCards, setModalCads] = useState<{ cards: Card[], type: GameCardType } | null>(null)
@@ -59,20 +60,6 @@ export const Game = memo(({ client, gameState, roomState, diceDetails, handleDic
     [client, user, roomState]
   );
 
-
-  const handleGetSand = () => {
-    sendTurn(TurnType.GET_SAND)
-  }
-  const handleGetDiscardSand = () => {
-    sendTurn(TurnType.GET_SAND_DISCARD)
-  }
-  const handleGetBlood = () => {
-    sendTurn(TurnType.GET_BLOOD)
-  }
-  const handleGetDiscardBlood = () => {
-    sendTurn(TurnType.GET_BLOOD_DISCARD)
-  }
-
   useEffect(() => {
     const playerIndex = gameState.players[0].playerId == user?.id ? 0 : 1;
     if (gameState.players[playerIndex].bloodCards.length > 1) {
@@ -97,10 +84,15 @@ export const Game = memo(({ client, gameState, roomState, diceDetails, handleDic
     }
   }, [winnerId]);
 
+  const handleCloseRoundModal = () => {
+    setShowRoundModal(false);
+    fetchGameState();
+  }
+
 
   return (
     <>
-      {(showRoundModal && !showGameModal) && (<GameRoundResultModal roundResult={roundResult} onClose={() => setShowRoundModal(false)} />)}
+      {(showRoundModal && !showGameModal) && (<GameRoundResultModal roundResult={roundResult} roomState={roomState} onClose={handleCloseRoundModal} />)}
       {showGameModal && (<GameResultModal winnerId={winnerId!} onClose={() => navigate(getRouteMain())} />)}
       {modalCards && <GameCardModal cards={modalCards.cards} sendTurn={sendTurn} type={modalCards.type} />}
       {diceDetails && (<GameDiceModal first={diceDetails.first} second={diceDetails.second} onSelect={handleDiceSelection} />)}

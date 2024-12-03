@@ -25,8 +25,8 @@ export const useGameState = () => {
         await axios.get(`${__API__}/api/v1/room/game/current-state?sessionId=${sessionId}`)
       ).data;
       setGameState(data);
-      console.log(data);
     } catch (err) {
+      console.log('data');
       setTimeout(() => fetchGameState(), 500);
     }
   };
@@ -59,7 +59,7 @@ export const useGameState = () => {
           playerId: playerId,
           turnType: TurnType.SELECT_DICE,
           details: {
-            index,
+            index: index == 0 ? 1 : 0,
           },
         }),
       });
@@ -107,6 +107,8 @@ export const useGameState = () => {
           const data = JSON.parse(message.body);
           console.log(data)
           setRoundResult(data); // Сохраняем результаты раунда
+          fetchGameState();
+          fetchRoomState();
         });
       };
 

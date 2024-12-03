@@ -23,7 +23,7 @@ export const GameCardModal = memo((props: GameCardModalProps) => {
     <>
       <div className={cls.overlay}></div>
       <div className={classNames(cls.GameCardModal, {}, [])} {...otherProps}>
-        <h5 className={cls.title}>Выберите карту для сброса</h5>
+        <h5 className={cls.title}>Выберите карту</h5>
 
         <div className={cls.container}>
           {cards.map((card, i) =>

@@ -37,7 +37,7 @@ export const GameFooter = memo((props: GameFooterProps) => {
   const handleLeaveGame = () => {
     if (leaveCurrentRoom) {
       leaveCurrentRoom();
-      navigate(getRouteMain())
+      setTimeout(() => { navigate(getRouteMain())}, 500)
     };
   };
 
