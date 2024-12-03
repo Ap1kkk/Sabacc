@@ -14,7 +14,7 @@ public class UsersCleanupService {
 
     private final UserService userService;
 
-    @Scheduled(cron = "0 * * * * *")
+    @Scheduled(cron = "${cron.user-cleanup}")
     public void cleanUp() {
         log.info("User cleanup: started");
         List<Long> allExpiredUserIds = userService.getAllExpiredUsers();

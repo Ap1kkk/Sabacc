@@ -109,6 +109,7 @@ public class SessionRoomService {
 
     @Transactional
     public void leaveAllRooms(Long userId) {
+        log.info("User [{}] leaving all sessions", userId);
         List<SessionRoom> userSessionRooms = getAllUserSessionRooms(userId);
         userSessionRooms.forEach(r -> leaveRoom(r.getId(), userId));
     }
@@ -121,6 +122,15 @@ public class SessionRoomService {
 
         if(!roomContainsUser(sessionRoom, userId))
             throw new PlayerNotRelatedToSessionException(roomId, userId);
+
+        //send finish dto to message exchanger
+        long winnerId;
+        if(sessionRoom.getPlayerFirst().getId().equals(userId))
+            winnerId = sessionRoom.getPlayerSecond().getId();
+        else
+            winnerId = sessionRoom.getPlayerFirst().getId();
+
+        eventPublisher.publishEvent(new PlayerLeftSessionEvent(roomId, userId, winnerId));
 
         SessionRoomStatus status = sessionRoom.getStatus();
 

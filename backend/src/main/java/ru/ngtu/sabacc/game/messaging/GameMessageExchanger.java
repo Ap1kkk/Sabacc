@@ -2,11 +2,13 @@ package ru.ngtu.sabacc.game.messaging;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 import ru.ngtu.sabacc.gamecore.game.GameErrorDto;
 import ru.ngtu.sabacc.gamecore.game.GameFinishDto;
 import ru.ngtu.sabacc.gamecore.game.GameRoundDto;
 import ru.ngtu.sabacc.gamecore.turn.TurnDto;
+import ru.ngtu.sabacc.system.event.PlayerLeftSessionEvent;
 import ru.ngtu.sabacc.system.event.SessionFinishedEvent;
 import ru.ngtu.sabacc.ws.WebSocketMessageSender;
 
@@ -58,5 +60,14 @@ public class GameMessageExchanger implements IGameMessageExchanger {
                 finishDto
         );
         eventPublisher.publishEvent(new SessionFinishedEvent(sender.getSessionId()));
+    }
+
+    @EventListener
+    public void handlePlayerLeave(PlayerLeftSessionEvent event) {
+        socketMessageSender.sendMessageSessionBroadcast(
+                event.sessionId(),
+                WS_GAME_RESULTS_QUEUE,
+                new GameFinishDto(event.sessionId(), event.winnerId())
+        );
     }
 }

@@ -53,3 +53,20 @@ websocket:
     application-destination-prefixes:
       - "/app"
     user-destination-prefixes: "/user"
+
+
+cron:
+  user-cleanup: "0 */30 * * * *"
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    prometheus:
+      enabled: true
+  prometheus:
+    metrics:
+      export:
+        enabled: true
