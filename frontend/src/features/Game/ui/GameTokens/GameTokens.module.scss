@@ -2,12 +2,13 @@
   display: flex;
   justify-content: center;
   gap: 16px;
+  height: 84px;
 }
 
 .cardButton {
   background: none;
   border: none;
-  filter: contrast(2);
+  filter: contrast(1.5);
 }
 
 .clickable {

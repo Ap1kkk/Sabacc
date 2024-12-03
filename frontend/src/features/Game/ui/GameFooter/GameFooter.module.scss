@@ -18,21 +18,29 @@
   background: #000c;
   padding: 10px 20px;
   font: var(--font-m);
-  border-radius: 0 0 20px 20px;
+  border: 5px solid #00b3ff;
+  transform: skew(-20deg);
+
+  span {
+    display: inline-block;
+    transform: skew(20deg);
+  }
+}
+
+@keyframes blink {
+  0%,
+  100% {
+    background-color: #00b3ff;
+  }
+
+  50% {
+    background-color: #000000;
+  }
 }
 
 .controls {
   position: absolute;
   bottom: 100%;
-}
-
-@keyframes blink {
-  0%, 100% {
-    background-color: rgba(0, 179, 255, 0.8);
-  }
-  50% {
-    background-color: rgba(0, 0, 0, 0.8);
-  }
 }
 
 .currentUserTurn {
@@ -44,7 +52,7 @@
   cursor: pointer;
   background: none;
   border: none;
-  filter: brightness(0.7) contrast(2) grayscale(.85);
+  filter: brightness(0.8) grayscale(.1);
 }
 
 .myCards {
@@ -71,12 +79,12 @@
   span {
     font-weight: 300;
     color: #dbd79e;
-    font-size: 30px;
+    font-size: 24px;
   }
 
   img {
-    width: 40px;
-    height: 40px;
+    width: 28px;
+    height: 28px;
     object-fit: contain;
   }
 }

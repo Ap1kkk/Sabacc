@@ -1,0 +1,28 @@
+.table {
+  width: 1200px;
+  height: 650px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 100px;
+  position: relative;
+  background: url(src/shared/assets/images/table.png) center/cover no-repeat;
+}
+
+.discardBlood {
+  position: absolute;
+  right: 72%;
+}
+
+.discardSand {
+  position: absolute;
+  left: 72%;
+}
+
+.bank {
+  position: absolute;
+  top: 50%;
+  right: 0;
+  transform: translateY(-50%);
+}

@@ -8,6 +8,30 @@
   z-index: 2;
 }
 
+.curTurn {
+  position: absolute;
+  height: 100%;
+  right: 210px;
+  bottom: 0;
+  background: #000c;
+  padding: 5px 20px;
+  transform: skew(-20deg);
+  border: 5px solid #00b3ff;
+  font: var(--font-m);
+  animation: blink 1s ease-in-out infinite;
+
+  img {
+    width: 20px;
+    height: 100%;
+    filter: invert(1);
+    transform: skew(20deg) rotate(180deg);
+
+    &.cur {
+      transform: skew(20deg) rotate(0);
+    }
+  }
+}
+
 .nickname {
   margin-right: auto;
   height: fit-content;
@@ -18,8 +42,14 @@
   text-align: center;
   background: #000c;
   padding: 10px 20px;
+  transform: skew(-20deg);
+  border: 5px solid #00b3ff;
   font: var(--font-m);
-  border-radius: 20px 20px 0 0;
+
+  span {
+    display: inline-block;
+    transform: skew(20deg);
+  }
 }
 
 .controls {
@@ -32,11 +62,11 @@
 
   0%,
   100% {
-    background-color: rgba(0, 179, 255, 0.8);
+    background-color: #00b3ff;
   }
 
   50% {
-    background-color: rgba(0, 0, 0, 0.8);
+    background-color: #000000;
   }
 }
 
@@ -58,10 +88,16 @@
   position: absolute;
   bottom: 0;
   right: 40px;
-  padding: 20px 20px 10px 20px;
+  padding: 15px 30px;
   background-color: #000c;
-  border-radius: 20px 20px 0 0;
   font-size: 20px;
+  transform: skew(-20deg);
+  border: 5px solid #00b3ff;
+
+  span {
+    display: inline-block;
+    transform: skew(20deg);
+  }
 }
 
 .myBank {
@@ -79,12 +115,12 @@
   span {
     font-weight: 300;
     color: #dbd79e;
-    font-size: 30px;
+    font-size: 24px;
   }
 
   img {
-    width: 40px;
-    height: 40px;
+    width: 28px;
+    height: 28px;
     object-fit: contain;
   }
 }

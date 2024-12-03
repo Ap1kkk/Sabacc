@@ -20,6 +20,7 @@ import { GameRoundResultModal } from '../GameRoundResultModal/GameRoundResultMod
 import { GameResultModal } from '../GameResultModal/GameResultModal';
 import { useNavigate } from 'react-router-dom';
 import { getRouteMain } from '@/shared/const/router';
+import { GameTable } from '../GameTable/GameTable';
 
 interface GameProps {
   client: Client;
@@ -32,7 +33,7 @@ interface GameProps {
   leaveCurrentRoom: any;
 }
 
-export const Game = memo(({ client, gameState, roomState, diceDetails, handleDiceSelection, winnerId, roundResult,leaveCurrentRoom }: GameProps) => {
+export const Game = memo(({ client, gameState, roomState, diceDetails, handleDiceSelection, winnerId, roundResult, leaveCurrentRoom }: GameProps) => {
   const user = useSelector(selectCurrentUser);
   const opponent = useOpponent(user?.id, roomState);
   const [modalCards, setModalCads] = useState<{ cards: Card[], type: GameCardType } | null>(null)
@@ -99,39 +100,17 @@ export const Game = memo(({ client, gameState, roomState, diceDetails, handleDic
 
   return (
     <>
-      {(showRoundModal && !showGameModal) && (
-        <GameRoundResultModal roundResult={roundResult} onClose={() => setShowRoundModal(false)} />
-      )}
-      {showGameModal && (
-        <GameResultModal winnerId={winnerId!} onClose={() => navigate(getRouteMain())} />
-      )}
-
+      {(showRoundModal && !showGameModal) && (<GameRoundResultModal roundResult={roundResult} onClose={() => setShowRoundModal(false)} />)}
+      {showGameModal && (<GameResultModal winnerId={winnerId!} onClose={() => navigate(getRouteMain())} />)}
       {modalCards && <GameCardModal cards={modalCards.cards} sendTurn={sendTurn} type={modalCards.type} />}
-      {diceDetails && (
-        <GameDiceModal
-          first={diceDetails.first}
-          second={diceDetails.second}
-          onSelect={handleDiceSelection}
-        />
-      )}
+      {diceDetails && (<GameDiceModal first={diceDetails.first} second={diceDetails.second} onSelect={handleDiceSelection} />)}
 
-      <div className={classNames(cls.ç, {}, [])}>
+      <div className={classNames(cls.container, {}, [])}>
         <GameHeader opponent={opponent} isCurentTurn={opponent?.id === gameState.currentPlayerId} gameState={gameState} />
 
-        <div className={cls.table}>
-          <div className={cls.discardBlood}>
-            {gameState.bloodDiscard && <GameCard type={GameCardType.BLOOD} card={gameState.bloodDiscard} onClick={handleGetDiscardBlood} />}
-          </div>
-          <GameCard type={GameCardType.BLOOD} isFlipped isMultiple onClick={handleGetBlood} />
-          <GameCard type={GameCardType.SAND} isFlipped isMultiple onClick={handleGetSand} />
-          <div className={cls.discardSand}>
-            {gameState.sandDiscard && <GameCard type={GameCardType.SAND} card={gameState.sandDiscard} onClick={handleGetDiscardSand} />}
-          </div>
+        <GameTable gameState={gameState} sendTurn={sendTurn} userId={user?.id!} />
 
-          <GameBank gameState={gameState} userId={user?.id} className={cls.bank} sendTurn={sendTurn} />
-        </div>
-
-        <GameFooter user={user!} isCurentTurn={user?.id === gameState.currentPlayerId} gameState={gameState} sendTurn={sendTurn} leaveCurrentRoom={leaveCurrentRoom}/>
+        <GameFooter user={user!} isCurentTurn={user?.id === gameState.currentPlayerId} gameState={gameState} sendTurn={sendTurn} leaveCurrentRoom={leaveCurrentRoom} />
       </div>
     </>
   );

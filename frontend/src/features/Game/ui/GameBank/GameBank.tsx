@@ -46,7 +46,7 @@ export const GameBank = memo((props: GameBankProps) => {
         </div>
       </div>
 
-      <h2>BANK</h2>
+      <h2>БАНК</h2>
     </div>
   );
 });

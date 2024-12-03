@@ -62,7 +62,9 @@ export const GameFooter = memo((props: GameFooterProps) => {
       <AppLink className={cls.button} to={getRouteRools()}><img src={RoolsImg} alt="" /></AppLink>
       <button className={cls.button} onClick={handlePass}><img src={PassImg} alt="" /></button>
 
-      <h5 className={classNames(cls.nickname, mods, [])}>{user?.username || 'Opponent'}</h5>
+      <div className={classNames(cls.nickname, mods, [])}>
+        <span>{user?.username || 'Opponent'}</span>
+      </div>
     </div>
   );
 });
