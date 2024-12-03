@@ -12,10 +12,12 @@ export const useWebSocketGame = (playerId: number | undefined, sessionId: number
     const socket = new SockJS(`${__API__}/game?playerId=${playerId}&sessionId=${sessionId}`);
     const stompClient = new Client({
       webSocketFactory: () => socket,
-      onStompError: (error) => console.error(`Ошибка WebSocket: ${error}`),
-      onConnect: () => {
-        console.log('WebSocket соединение установлено');
-      },
+      heartbeatIncoming: 300000,
+      heartbeatOutgoing: 300000,
+      debug: (msg) => console.log('WebSocket:', msg),
+      onConnect: () => console.log('WebSocket connected'),
+      onDisconnect: () => console.log('WebSocket disconnected'),
+      onStompError: (frame) => console.error('WebSocket error:', frame),
     });
 
     stompClient.activate();
