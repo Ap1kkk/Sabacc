@@ -27,6 +27,11 @@ export const MainMenu = memo((props: MainMenuProps) => {
 
   const handleClose = () => setIsOpen(false);
 
+  const handleLogout = () => {
+    localStorage.clear();
+    window.location.href = ""
+  }
+
   return (
     <div className={classNames(cls.Menu, {}, [className])}>
       <Button variant="btn" className={cls.mainLink} onClick={handleOpen}>
@@ -37,9 +42,17 @@ export const MainMenu = memo((props: MainMenuProps) => {
         <Auth />
       </Modal>
 
-      <AppLink variant="btn" to={getRouteRools()}>
-        Правила
-      </AppLink>
+      <div className={cls.btns}>
+        <AppLink variant="btn" to={getRouteRools()}>
+          Правила
+        </AppLink>
+
+        {user &&
+          <Button variant="btn" onClick={handleLogout}>
+            Выйти
+          </Button>
+        }
+      </div>
     </div>
   );
 });
