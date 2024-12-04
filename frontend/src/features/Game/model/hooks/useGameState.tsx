@@ -59,7 +59,7 @@ export const useGameState = () => {
           playerId: playerId,
           turnType: TurnType.SELECT_DICE,
           details: {
-            index: index == 0 ? 1 : 0,
+            index
           },
         }),
       });

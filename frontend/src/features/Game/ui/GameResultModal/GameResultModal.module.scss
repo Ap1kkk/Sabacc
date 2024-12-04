@@ -12,6 +12,7 @@
 }
 
 .modalСontent {
+  position: relative;
   padding: 140px 60px;
   border-radius: 16px;
   text-align: center;
@@ -22,6 +23,7 @@
 
 .background {
   position: absolute;
+  z-index: -1;
   top: 0;
   left: 0;
   width: 100%;

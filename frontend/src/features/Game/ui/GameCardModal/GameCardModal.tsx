@@ -16,6 +16,7 @@ export const GameCardModal = memo((props: GameCardModalProps) => {
 
   const handleDropCard = (index: number) => {
     const turnType = type == GameCardType.SAND ? TurnType.DISCARD_SAND : TurnType.DISCARD_BLOOD
+    index = index == 0 ? 1 : 0;
     sendTurn(turnType, { index: index })
   }
 
