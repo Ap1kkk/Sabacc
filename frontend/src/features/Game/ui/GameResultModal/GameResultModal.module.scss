@@ -12,11 +12,19 @@
 }
 
 .modalСontent {
-  background: url(src/shared/assets/images/table_cubes.png) center/cover no-repeat;;
   padding: 140px 60px;
   border-radius: 16px;
   text-align: center;
   display: flex;
   flex-direction: column;
   gap: 60px;
+}
+
+.background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }

@@ -5,6 +5,7 @@ import Dice3 from '@/shared/assets/images/cube3.png';
 import Dice4 from '@/shared/assets/images/cube4.png';
 import Dice5 from '@/shared/assets/images/cube5.png';
 import Dice6 from '@/shared/assets/images/cube6.png';
+import BackgroundTable from '@/shared/assets/images/table_cubes.png'
 import cls from './GameDiceModal.module.scss';
 import { classNames } from '@/shared/lib/classNames/classNames';
 
@@ -59,6 +60,7 @@ export const GameDiceModal = memo((props: GameDiceModalProps) => {
   return (
     <div className={cls.GameDiceModal}>
       <div className={cls.modalСontent}>
+        <img src={BackgroundTable} className={cls.background} />
         <h2>Выберите кубик</h2>
 
         {/* Обратный отсчёт */}

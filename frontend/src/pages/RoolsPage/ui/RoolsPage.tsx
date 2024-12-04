@@ -1,4 +1,4 @@
-import { memo } from 'react';
+import { memo, useRef } from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/css';
 import 'swiper/css/effect-cards';
@@ -8,24 +8,44 @@ import './RoolsPage.scss'
 import { EffectCards, Pagination, Navigation } from 'swiper/modules';
 import cls from './RoolsPage.module.scss'
 import { Button } from '@/shared/ui';
+import Arrow from '@/shared/assets/icons/rools-arrow.png';
 
 export const RoolsPage = memo(() => {
+  const swiperRef = useRef<any>(null);
+
   const handleBack = () => {
     window.history.back();
   }
+
+  const handleNextSlide = () => {
+    if (swiperRef.current) {
+      swiperRef.current.slideNext();
+    }
+  };
+
+  const handlePrevSlide = () => {
+    if (swiperRef.current) {
+      swiperRef.current.slidePrev();
+    }
+  };
 
   return (
     <>
       <Swiper
         effect={'cards'}
         grabCursor={true}
-        modules={[EffectCards, Pagination, Navigation]}
+        modules={[EffectCards, Pagination]}
         pagination={{
           type: 'fraction',
         }}
-        navigation={true}
+        onSwiper={(swiper) => {
+          swiperRef.current = swiper;
+        }}
       >
         <Button className={cls.btnBack} onClick={handleBack}>Вернуться</Button>
+        <Button className={cls.slideNext} variant='clear' onClick={handleNextSlide}><img src={Arrow} /></Button>
+        <Button className={cls.slideBack} variant='clear' onClick={handlePrevSlide}><img src={Arrow} /></Button>
+        
         <SwiperSlide>
           <ol className={cls.list}>
             <li>Есть 2 колоды: жёлтые карты и красные карты.</li>

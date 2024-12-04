@@ -12,13 +12,22 @@
 }
 
 .modalСontent {
-  background: url(src/shared/assets/images/table_cubes.png) center/cover no-repeat;
+  position: relative;
   padding: 50px;
   border-radius: 8px;
   text-align: center;
   display: flex;
   flex-direction: column;
   gap: 20px;
+}
+
+.background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 .dice {

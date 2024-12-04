@@ -29,6 +29,8 @@ export const Button = memo((props: ButtonProps) => {
 
   const additionalClasses = [className, cls[variant]];
 
+  console.log(className)
+  
   return (
     <button
       type="button"

@@ -4,6 +4,7 @@ import cls from './GameTable.module.scss';
 import { GameCard, GameCardType } from '@/entities/GameCard';
 import { TurnType } from '../../model/types/game';
 import { GameBank } from '../GameBank/GameBank';
+import BackgroundTable from '@/shared/assets/images/table.png'
 
 interface GameTableProps {
   gameState: any;
@@ -28,6 +29,8 @@ export const GameTable = memo((props: GameTableProps) => {
   }
   return (
     <div className={cls.table}>
+      <img src={BackgroundTable} className={cls.background} />
+
       <div className={cls.discardBlood}>
         {gameState.bloodDiscard && <GameCard type={GameCardType.BLOOD} card={gameState.bloodDiscard} onClick={handleGetDiscardBlood} />}
       </div>

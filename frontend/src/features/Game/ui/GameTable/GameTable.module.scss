@@ -7,7 +7,14 @@
   justify-content: center;
   gap: 100px;
   position: relative;
-  background: url(src/shared/assets/images/table.png) center/cover no-repeat;
+}
+.background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 .discardBlood {

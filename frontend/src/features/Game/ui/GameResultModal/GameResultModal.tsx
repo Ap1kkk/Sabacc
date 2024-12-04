@@ -2,6 +2,7 @@ import { classNames } from '@/shared/lib/classNames/classNames';
 import { memo, ReactNode } from 'react';
 import cls from './GameResultModal.module.scss';
 import { useSelector } from 'react-redux';
+import BackgroundTable from '@/shared/assets/images/table_cubes.png'
 import { selectCurrentUser } from '@/features/Auth';
 
 interface GameResultModalProps {
@@ -18,6 +19,7 @@ export const GameResultModal = memo(({ winnerId, onClose }: GameResultModalProps
   return (
     <div className={cls.GameResultModal} onClick={onClose}>
       <div className={cls.modalСontent}>
+        <img src={BackgroundTable} className={cls.background} />
         <h1>Результаты игры</h1>
         <h2>{user.id == winnerId ? 'ПОБЕДА!' : "ПРОИГРЫШ("}</h2>
       </div>

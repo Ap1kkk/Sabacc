@@ -14,13 +14,20 @@
 .modalСontent {
   width: 600px;
   height: 600px;
-  background: url(src/shared/assets/images/table_cubes.png) center/cover no-repeat;
   border-radius: 16px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   gap: 50px;
+}
+.background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 .list {

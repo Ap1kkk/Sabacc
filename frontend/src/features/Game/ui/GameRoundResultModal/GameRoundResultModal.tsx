@@ -5,6 +5,7 @@ import { useSelector } from 'react-redux';
 import { selectCurrentUser } from '@/features/Auth';
 import { useOpponent } from '@/shared/lib/hooks/useOpponent';
 import CreditImg from '@/shared/assets/images/credit.png'
+import BackgroundTable from '@/shared/assets/images/table_cubes.png'
 
 interface GameRoundResultModalProps {
   roundResult: any;
@@ -24,6 +25,7 @@ export const GameRoundResultModal = memo(({ roundResult, roomState, onClose }: G
   return (
     <div className={cls.GameRoundResultModal} onClick={onClose}>
       <div className={cls.modalСontent}>
+        <img src={BackgroundTable} className={cls.background} />
         <h1>Результаты раунда</h1>
         <ul className={cls.list}>
           {roundResult.players.map((player: any) => (

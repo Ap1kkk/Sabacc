@@ -24,26 +24,6 @@
   padding: 40px 40px 60px 40px;
 }
 
-.swiper-button-prev,
-.swiper-button-next {
-  top: auto !important;
-  bottom: 20px;
-  z-index: 2;
-  right: calc(50% - 70px);
-  width: 25px;
-  height: 25px;
-  background: url("src/shared/assets/icons/rools-arrow.png") center/contain no-repeat;
-
-  &:after {
-    display: none;
-  }
-}
-
-.swiper-button-prev {
-  left: calc(50% - 70px);
-  transform: rotate(180deg);
-}
-
 .swiper-pagination {
   top: auto !important;
   bottom: 20px !important;
