@@ -39,10 +39,14 @@ class GameSession(
     private var dice: Array<Int>? = null
 
     override fun start() {
+
         board = initGameBoard()
         waitingForMoveType = initWaitingForMoveType()
 
         for (player in players.values) {
+            player.sandCards.clear()
+            player.bloodCards.clear()
+
             player.sandCards.add(
                 board.sandDeck.removeLast()
             )
@@ -479,8 +483,8 @@ class GameSession(
         logger.debug { "Session $sessionId: Round $round. Starting counting the results" }
         // Rate players hand
         for (player in players.values) {
-            val sandCard = player.sandCards.removeLast()
-            val bloodCard = player.bloodCards.removeLast()
+            val sandCard = player.sandCards.last()
+            val bloodCard = player.bloodCards.last()
 
             player.handRating = rateHand(sandCard, bloodCard)
             logger.debug { "Session $sessionId: Round $round. Player ${player.playerId} has hand rating of ${player.handRating}" }
