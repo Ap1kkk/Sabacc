@@ -8,6 +8,7 @@ import CreditImg from '@/shared/assets/images/credit.png'
 import BackgroundTable from '@/shared/assets/images/table_cubes.png'
 import { GameCard, GameCardType } from '@/entities/GameCard';
 import { Card } from '../../model/types/game';
+import { Button } from '@/shared/ui';
 
 interface GameRoundResultModalProps {
   roundResult: any;
@@ -35,7 +36,7 @@ export const GameRoundResultModal = memo(({ roundResult, roomState, onClose }: G
   }, [roundResult])
 
   return (
-    <div className={cls.GameRoundResultModal} onClick={onClose}>
+    <div className={cls.GameRoundResultModal}>
       <div className={cls.modalСontent}>
         <img src={BackgroundTable} className={cls.background} />
         <h1>Результаты раунда {roundResult.round}</h1>
@@ -78,6 +79,7 @@ export const GameRoundResultModal = memo(({ roundResult, roomState, onClose }: G
             </li>
           ))}
         </ul>
+        <Button className={cls.btnToNext} onClick={onClose} variant='btn'>Далее</Button>
       </div>
     </div>
   );

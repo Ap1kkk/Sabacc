@@ -92,8 +92,8 @@ export const Game = memo(({ client, gameState, roomState, diceDetails, handleDic
 
   return (
     <>
-      {(showRoundModal && !showGameModal) && (<GameRoundResultModal roundResult={roundResult} roomState={roomState} onClose={handleCloseRoundModal} />)}
-      {showGameModal && (<GameResultModal winnerId={winnerId!} onClose={() => navigate(getRouteMain())} />)}
+      {(showRoundModal) && (<GameRoundResultModal roundResult={roundResult} roomState={roomState} onClose={handleCloseRoundModal} />)}
+      {(showGameModal && !showRoundModal) && (<GameResultModal winnerId={winnerId!} onClose={() => navigate(getRouteMain())} />)}
       {modalCards && <GameCardModal cards={modalCards.cards} sendTurn={sendTurn} type={modalCards.type} />}
       {diceDetails && (<GameDiceModal first={diceDetails.first} second={diceDetails.second} onSelect={handleDiceSelection} />)}
 

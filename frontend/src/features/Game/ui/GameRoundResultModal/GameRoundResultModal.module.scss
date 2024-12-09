@@ -13,8 +13,8 @@
 
 .modalСontent {
   position: relative;
-  width: 800px;
-  height: 800px;
+  width: 900px;
+  height: 900px;
   border-radius: 16px;
   display: flex;
   flex-direction: column;
@@ -119,4 +119,9 @@
   margin-top: 10px;
   display: flex;
   flex-direction: row;
+}
+.btnToNext {
+  width: fit-content;
+  padding: 12px 70px;
+  margin: 0 50px 0 auto;
 }
