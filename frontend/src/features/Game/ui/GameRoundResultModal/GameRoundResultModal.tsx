@@ -22,11 +22,19 @@ export const GameRoundResultModal = memo(({ roundResult, roomState, onClose }: G
     [opponent!.id]: opponent?.username
   }
 
+  useEffect(() => {
+    console.log(roundResult)
+
+    return () => {
+
+    }
+  }, [])
+
   return (
     <div className={cls.GameRoundResultModal} onClick={onClose}>
       <div className={cls.modalСontent}>
         <img src={BackgroundTable} className={cls.background} />
-        <h1>Результаты раунда</h1>
+        <h1>Результаты раунда {roundResult.round}</h1>
         <ul className={cls.list}>
           {roundResult.players.map((player: any) => (
             <li key={player.playerId} className={cls.container}>
@@ -34,10 +42,26 @@ export const GameRoundResultModal = memo(({ roundResult, roomState, onClose }: G
                 <span>{getUsernameById[player.playerId]}</span>
               </h4>
 
-              <div className={cls.credit}>
-                <span>потрачено {player.spentChips}</span>
-                <div className={cls.imgContainer}>
-                  <img src={CreditImg} />
+              <div>
+                <div className={cls.credit}>
+                  <span>Начальный банк {player.spentChips + player.remainChips}</span>
+                  <div className={cls.imgContainer}>
+                    <img src={CreditImg} />
+                  </div>
+                </div>
+
+                <div className={cls.credit}>
+                  <span>Текущий банк {player.spentChips}</span>
+                  <div className={cls.imgContainer}>
+                    <img src={CreditImg} />
+                  </div>
+                </div>
+
+                <div className={cls.credit}>
+                  <span>ИТОГО: {0 - player.remainChips}</span>
+                  <div className={cls.imgContainer}>
+                    <img src={CreditImg} />
+                  </div>
                 </div>
               </div>
             </li>
