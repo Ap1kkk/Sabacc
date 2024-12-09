@@ -10,3 +10,4 @@ WORKDIR /app
 COPY --from=builder /app/build/libs/*.jar app.jar
 
 CMD ["java", "-jar", "app.jar"]
+LABEL org.opencontainers.image.source=https://github.com/Ap1kkk/Sabacc

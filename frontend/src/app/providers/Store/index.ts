@@ -1,5 +1,6 @@
-import type { AppDispatch, AppState } from './config/store'
+import type { AppDispatch } from './config/store'
+import type { StateSchema } from './config/StateSchema'
 export type {
   AppDispatch,
-  AppState
+  StateSchema
 };

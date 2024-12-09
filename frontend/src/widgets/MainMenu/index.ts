@@ -1,1 +1,1 @@
-export { Menu } from './ui/MainMenu';
+export { MainMenu } from './ui/MainMenu';

@@ -2,7 +2,7 @@ import { ButtonHTMLAttributes, memo, ReactNode } from 'react';
 import { classNames, Mods } from '@/shared/lib/classNames/classNames';
 import cls from './Button.module.scss';
 
-export type ButtonVariant = 'clear' | 'outline' | 'filled';
+export type ButtonVariant = 'clear' | 'outline' | 'btn';
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   className?: string;
@@ -29,6 +29,8 @@ export const Button = memo((props: ButtonProps) => {
 
   const additionalClasses = [className, cls[variant]];
 
+  console.log(className)
+  
   return (
     <button
       type="button"

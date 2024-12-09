@@ -1,17 +1,45 @@
-import { productReducer } from '@/entities/Product/model/slice/productSlice';
-import { configureStore } from '@reduxjs/toolkit';
-import { combineReducers } from 'redux';
+import { configureStore, Reducer, ReducersMapObject, Action } from '@reduxjs/toolkit';
+import { rtkApi } from '@/shared/api/rtkApi';
+import { StateSchema } from './StateSchema';
+import { createReducerManager } from './reducerManager';
+import { authReducer } from '@/features/Auth/model/slice/authSlice';
 
-const rootReducer = combineReducers({
-  products: productReducer
-});
+type AsyncReducers = Omit<ReducersMapObject<StateSchema>, 'auth'>;
 
-export const store = configureStore({
-  reducer: rootReducer,
-  middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware(),
-  devTools: __IS_DEV__, 
-});
+export function createReduxStore(
+  initialState?: StateSchema,
+  asyncReducers?: AsyncReducers,
+) {
+  // Статические редьюсеры
+  const staticReducers: ReducersMapObject<StateSchema> = {
+    auth: authReducer,
+    [rtkApi.reducerPath]: rtkApi.reducer,
+  };
 
-export type AppState = ReturnType<typeof rootReducer>;
-export type AppDispatch = typeof store.dispatch;
+  // Комбинируем статические редьюсеры с асинхронными
+  const rootReducers: ReducersMapObject<StateSchema> = {
+    ...staticReducers,
+    ...(asyncReducers || {}),
+  };
+
+  const reducerManager = createReducerManager(rootReducers);
+
+  const middleware = (getDefaultMiddleware: any) =>
+    getDefaultMiddleware().concat(
+      rtkApi.middleware,
+    );
+
+  const store = configureStore({
+    reducer: reducerManager.reduce as Reducer<StateSchema, Action>,
+    devTools: __IS_DEV__,
+    preloadedState: initialState,
+    middleware,
+  });
+
+  // @ts-ignore
+  store.reducerManager = reducerManager;
+
+  return store;
+}
+
+export type AppDispatch = ReturnType<typeof createReduxStore>['dispatch'];

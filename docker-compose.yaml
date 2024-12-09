@@ -4,10 +4,9 @@ x-project-name:
   &project-name sabacc
 
 x-host:
-  &host localhost
-
-x-cors:
-  &cors "http://localhost:4200"
+  &host 103.90.75.122:88
+x-protocol:
+  &protocol http
 
 x-db-host:
   &db-host postgres
@@ -17,10 +16,27 @@ x-db-password:
   &db-password postgres
 
 x-profiles:
-  &profiles dev
+  &profiles prod
 
 services:
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    ports:
+      - "9090:9090"
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./grafana-data:/var/lib/grafana
+
   backend:
+    image: ghcr.io/ap1kkk/sabacc/backend:latest
     build:
       context: backend
       dockerfile: Dockerfile
@@ -31,6 +47,7 @@ services:
       - postgres
     environment:
       SERVER_HOST: *host
+      SERVER_PROTOCOL: *protocol
 
       SPRING_PROFILES_ACTIVE: *profiles
 
@@ -54,24 +71,15 @@ services:
       POSTGRES_DB: *project-name
     ports:
       - "5432:5432"
-      - "5435:5432"
-    volumes:
-      - ./postgres-data:/var/lib/postgresql/data
+#    volumes:
+#      - ./postgres-data:/var/lib/postgresql/data
 
   frontend:
+    image: ghcr.io/ap1kkk/sabacc/frontend:latest
     build:
       context: frontend
       dockerfile: Dockerfile
     container_name: sabacc_frontend
-    ports:
-      - "4000:4000"
-
-  nginx:
-    image: nginx:stable-alpine3.19
-    container_name: sabacc_nginx
-    depends_on:
-      - backend
-      - frontend
     ports:
       - "80:80"
     volumes:
