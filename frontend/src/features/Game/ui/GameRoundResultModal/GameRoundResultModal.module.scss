@@ -20,7 +20,7 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 90px;
+  gap: 30px;
 }
 
 .background {
@@ -36,12 +36,13 @@
 .list {
   display: flex;
   flex-direction: column;
-  gap: 100px;
+  gap: 70px;
 }
 
 .container {
   display: flex;
   gap: 80px;
+  padding: 10px 50px;
 }
 
 .nickname {
@@ -63,6 +64,21 @@
   }
 }
 
+.winner {
+  position: relative;
+  padding-top: 60px;
+  border: #00b3ff solid 5px;
+  border-radius: 20px;
+}
+
+.winnerTitle {
+  position: absolute;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  color: #33c2ff;
+  font-size: 28px;
+}
 .credit {
   display: flex;
   align-items: center;
