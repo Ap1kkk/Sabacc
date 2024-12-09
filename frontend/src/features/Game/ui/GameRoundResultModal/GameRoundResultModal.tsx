@@ -6,6 +6,8 @@ import { selectCurrentUser } from '@/features/Auth';
 import { useOpponent } from '@/shared/lib/hooks/useOpponent';
 import CreditImg from '@/shared/assets/images/credit.png'
 import BackgroundTable from '@/shared/assets/images/table_cubes.png'
+import { GameCard, GameCardType } from '@/entities/GameCard';
+import { Card } from '../../model/types/game';
 
 interface GameRoundResultModalProps {
   roundResult: any;
@@ -38,9 +40,15 @@ export const GameRoundResultModal = memo(({ roundResult, roomState, onClose }: G
         <ul className={cls.list}>
           {roundResult.players.map((player: any) => (
             <li key={player.playerId} className={cls.container}>
-              <h4 className={cls.nickname}>
-                <span>{getUsernameById[player.playerId]}</span>
-              </h4>
+              <div>
+                <h4 className={cls.nickname}>
+                  <span>{getUsernameById[player.playerId]}</span>
+                </h4>
+                <h5 className={cls.cardRes}>
+                  <GameCard type={GameCardType.BLOOD} card={player.bloodCards[0]}></GameCard>
+                  <GameCard type={GameCardType.SAND} card={ player.sandCards[0]}></GameCard>
+                </h5>
+              </div>
 
               <div>
                 <div className={cls.credit}>
