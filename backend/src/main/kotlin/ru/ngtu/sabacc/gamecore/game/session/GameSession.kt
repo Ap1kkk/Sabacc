@@ -499,6 +499,7 @@ class GameSession(
         val winner = playersSortedByRating.first()
         val winnerId = players.keys.find { players[it] == winner }!!
         winner.remainChips += winner.spentChips
+        winner.spentChips = 0
         forcePay(winner, winner.handRating!!.first)
 
         logger.debug { "Session $sessionId: Round $round. Winner is Player ${winner.playerId}. He is paying ${winner.handRating!!.first}" }
