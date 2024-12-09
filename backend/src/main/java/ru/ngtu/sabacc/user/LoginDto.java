@@ -6,6 +6,6 @@ import lombok.Data;
  * DTO for {@link User}
  */
 @Data
-public class CreateUserDto {
+public class LoginDto {
     String username;
 }

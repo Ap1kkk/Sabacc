@@ -29,9 +29,9 @@ public class UserController {
         return userService.getUserByUsername(username);
     }
 
-    @PostMapping("/create/anonymous")
-    public User createUser(@RequestBody CreateUserDto dto) {
-        return userService.createUser(dto);
+    @PostMapping("/login")
+    public User createUser(@RequestBody LoginDto dto) {
+        return userService.createOrLoginUser(dto);
     }
 
     @DeleteMapping("/delete/{id}")
