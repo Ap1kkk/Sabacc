@@ -5,6 +5,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.ngtu.sabacc.room.SessionRoom;
+import ru.ngtu.sabacc.room.SessionRoomRepository;
+import ru.ngtu.sabacc.room.SessionRoomStatus;
 import ru.ngtu.sabacc.system.config.user.UserConfigProperties;
 import ru.ngtu.sabacc.system.event.UserDeletedEvent;
 import ru.ngtu.sabacc.system.exception.UserAlreadyExistsException;
@@ -14,6 +17,7 @@ import ru.ngtu.sabacc.system.exception.notfound.UserNotFoundException;
 import java.time.Duration;
 import java.time.ZonedDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -22,6 +26,7 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final UserConfigProperties userConfigProperties;
+    private final SessionRoomRepository sessionRoomRepository;
     private final ApplicationEventPublisher eventPublisher;
 
     public List<User> getAllUsers() {
@@ -60,7 +65,12 @@ public class UserService {
     @Transactional
     public User createOrLoginUser(LoginDto dto) {
         try {
-            return getUserByUsername(dto.getUsername());
+            User userByUsername = getUserByUsername(dto.getUsername());
+            Long userId = userByUsername.getId();
+            Optional<SessionRoom> sessionRoom = sessionRoomRepository.findByPlayerFirstIdOrPlayerSecondIdAndStatusNot(userId, userId, SessionRoomStatus.FINISHED);
+            if(sessionRoom.isPresent())
+                throw new RuntimeException("User already logged in");
+            return userByUsername;
         }
         catch (EntityNotFoundException ignored) {
             return createUser(dto);
