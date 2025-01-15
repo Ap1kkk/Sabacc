@@ -5,7 +5,7 @@ export const authApi = rtkApi.injectEndpoints({
   endpoints: (builder) => ({
     createAnonymousUser: builder.mutation<User, { username: string }>({
       query: (userData) => ({
-        url: 'users/create/anonymous',
+        url: 'users/login',
         method: 'POST',
         body: userData,
       }),

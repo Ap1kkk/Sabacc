@@ -5,6 +5,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.ngtu.sabacc.room.SessionRoom;
+import ru.ngtu.sabacc.room.SessionRoomRepository;
+import ru.ngtu.sabacc.room.SessionRoomStatus;
 import ru.ngtu.sabacc.system.config.user.UserConfigProperties;
 import ru.ngtu.sabacc.system.event.UserDeletedEvent;
 import ru.ngtu.sabacc.system.exception.UserAlreadyExistsException;
@@ -12,9 +15,9 @@ import ru.ngtu.sabacc.system.exception.notfound.EntityNotFoundException;
 import ru.ngtu.sabacc.system.exception.notfound.UserNotFoundException;
 
 import java.time.Duration;
-import java.time.Instant;
 import java.time.ZonedDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -23,6 +26,7 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final UserConfigProperties userConfigProperties;
+    private final SessionRoomRepository sessionRoomRepository;
     private final ApplicationEventPublisher eventPublisher;
 
     public List<User> getAllUsers() {
@@ -50,16 +54,31 @@ public class UserService {
     }
 
     @Transactional
-    public User createUser(CreateUserDto dto) {
-        log.info("Creating user: {}", dto);
+    public void deleteUserById(Long id) {
+        log.info("Deleting user: id={}", id);
+        User user = getUserById(id);
 
+        eventPublisher.publishEvent(new UserDeletedEvent(user));
+        userRepository.delete(user);
+    }
+
+    @Transactional
+    public User createOrLoginUser(LoginDto dto) {
         try {
-            if(getUserByUsername(dto.getUsername()) != null) {
-                throw new UserAlreadyExistsException(dto.getUsername());
-            }
+            User userByUsername = getUserByUsername(dto.getUsername());
+            Long userId = userByUsername.getId();
+            Optional<SessionRoom> sessionRoom = sessionRoomRepository.findByPlayerFirstIdOrPlayerSecondIdAndStatusNot(userId, userId, SessionRoomStatus.FINISHED);
+            if(sessionRoom.isPresent())
+                throw new RuntimeException("User already logged in");
+            return userByUsername;
         }
         catch (EntityNotFoundException ignored) {
+            return createUser(dto);
         }
+    }
+
+    private User createUser(LoginDto dto) {
+        log.info("Creating user: {}", dto);
 
         User userToCreate = User.builder()
                 .username(dto.getUsername())
@@ -70,14 +89,5 @@ public class UserService {
                 .build();
 
         return userRepository.save(userToCreate);
-    }
-
-    @Transactional
-    public void deleteUserById(Long id) {
-        log.info("Deleting user: id={}", id);
-        User user = getUserById(id);
-
-        eventPublisher.publishEvent(new UserDeletedEvent(user));
-        userRepository.delete(user);
     }
 }
